@@ -1,0 +1,8 @@
+---
+- name: synchronize time on all servers
+  hosts: k8s_node
+  become: yes
+  tasks:
+    - name: Sync time across all nodes
+      import_role:
+        name: time-sync
