@@ -1,9 +1,0 @@
-LOAD_BALANCER_IP:
-advertise_address: 
-# defaults/main.yaml
-kubernetes_dir: "/etc/kubernetes"
-admin_conf: "{{ kubernetes_dir }}/admin.conf"
-ansible_user_kube_config: "/home/ansible-user/.kube/config"
-root_kube_config: "/root/.kube/config"
-pause_image: "registry.k8s.io/pause:3.9"
-join_command_file: "/tmp/kubeadm-join-command.sh"
