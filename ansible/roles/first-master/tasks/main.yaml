@@ -1,0 +1,135 @@
+# tasks/main.yaml
+- name: Check if Kubernetes is already initialized
+  delegate_to: master1
+  stat:
+    path: "{{ admin_conf }}"
+  register: k8s_initialized
+
+- name: Pull the pause image
+  delegate_to: master1
+  command: ctr --namespace k8s.io image pull "{{ pause_image }}"
+  become: yes
+
+- name: Ensure Kubernetes directory exists
+  delegate_to: master1
+  file:
+    path: "{{ kubernetes_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copy kubeadm configuration
+  delegate_to: master1
+  template:
+    src: roles/first-master/templates/config.yaml.j2
+    dest: "{{ kubernetes_dir }}/kubeadm-config.yaml"
+    mode: "0644"
+
+- name: Check if kubeadm config file exists
+  delegate_to: master1
+  stat:
+    path: "{{ kubernetes_dir }}/kubeadm-config.yaml"
+  register: kubeadm_config
+
+- name: Debug kubeadm config existence
+  delegate_to: master1
+  debug:
+    msg: "Kubeadm config file exists: {{ kubeadm_config.stat.exists }}"
+
+- name: Initialize the Kubernetes master
+  delegate_to: master1
+  command: kubeadm init --config "{{ kubernetes_dir }}/kubeadm-config.yaml" --ignore-preflight-errors=NumCPU,Mem
+  when: kubeadm_config.stat.exists
+  register: kubeadm_init
+  failed_when: kubeadm_init.rc != 0
+  ignore_errors: yes
+
+- name: Check if Kubernetes directory exists
+  delegate_to: master1
+  stat:
+    path: "{{ kubernetes_dir }}"
+  register: kubernetes_dir_exists
+
+- name: Print status message based on directory existence
+  delegate_to: master1
+  debug:
+    msg: "/etc/kubernetes folder {{ 'exists' if kubernetes_dir_exists.stat.exists else 'does not exist' }}."
+
+- name: Check if Kubernetes is already initialized (kube-apiserver)
+  delegate_to: master1
+  stat:
+    path: "{{ kubernetes_dir }}/manifests/kube-apiserver.yaml"
+  register: k8s_apiserver_initialized
+
+- name: Create .kube folder for ansible-user
+  delegate_to: master1
+  become: yes
+  file:
+    path: "/home/ansible-user/.kube"
+    state: directory
+    owner: ansible-user
+    group: ansible-user
+    mode: "0755"
+  when: not k8s_initialized.stat.exists
+
+- name: Copy admin.conf to .kube folder for ansible-user
+  delegate_to: master1
+  become: yes
+  copy:
+    src: "{{ admin_conf }}"
+    dest: "{{ ansible_user_kube_config }}"
+    owner: ansible-user
+    group: ansible-user
+    mode: "0644"
+    remote_src: yes
+  when: not k8s_initialized.stat.exists
+
+- name: Create .kube folder for root
+  delegate_to: master1
+  file:
+    path: "/root/.kube"
+    state: directory
+    owner: "root"
+    mode: "0755"
+
+- name: Copy admin.conf to .kube folder for root
+  delegate_to: master1
+  copy:
+    src: "{{ admin_conf }}"
+    dest: "{{ root_kube_config }}"
+    owner: "root"
+    mode: "0644"
+    remote_src: yes
+
+- name: Copy admin.conf
+  delegate_to: master1
+  become: yes
+  copy:
+    src: "{{ admin_conf }}"
+    dest: "/tmp/admin.conf"
+    remote_src: yes
+
+- name: Change permissions of admin.conf to ansible-user readable
+  delegate_to: master1
+  file:
+    path: "{{ admin_conf }}"
+    owner: ansible-user
+    group: ansible-user
+    mode: "0644"
+
+- name: Enable IPtables Bridge Firewall Rule
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+    reload: yes
+
+- name: Generate join token
+  delegate_to: master1
+  command: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Save join command to file
+  copy:
+    content: "{{ join_command.stdout }}"
+    dest: "{{ join_command_file }}"
+  delegate_to: bastion

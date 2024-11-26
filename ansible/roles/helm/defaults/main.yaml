@@ -1,0 +1,4 @@
+helm_version: "v3.16.2"
+helm_platform: "linux-amd64"
+helm_download_url: "https://get.helm.sh/helm-{{ helm_version }}-{{ helm_platform }}.tar.gz"
+helm_bin_path: "/usr/local/bin/helm"

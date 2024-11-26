@@ -1,0 +1,8 @@
+---
+- name: Prepare Nodes for Running Kubernetes
+  hosts: k8s_node
+  become: yes
+  tasks:
+    - name: Import K8s-setup role
+      import_role:
+        name: k8s-setup
