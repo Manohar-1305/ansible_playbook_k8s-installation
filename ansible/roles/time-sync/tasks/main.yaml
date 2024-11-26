@@ -1,0 +1,16 @@
+# tasks/main.yaml
+- name: Install chrony package
+  package:
+    name: "{{ chrony_package }}"
+    state: present
+
+- name: Start and enable chrony service
+  service:
+    name: "{{ chrony_service }}"
+    state: started
+    enabled: yes
+  notify: Synchronize time immediately
+
+- name: Synchronize time immediately using chronyc
+  command: chronyc makestep
+  ignore_errors: yes
