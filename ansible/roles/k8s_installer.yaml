@@ -1,6 +1,5 @@
 ---
 - import_playbook: k8s-setup.yaml hostlist=k8s_node
-- import_playbook: time-sync.yaml hostlist=k8s_node
 - import_playbook: helm-install.yaml hostlist=k8s_node
 - import_playbook: kubernetes-role.yaml hostlist=k8s_node
 - import_playbook: first-master.yaml hostlist=master1
