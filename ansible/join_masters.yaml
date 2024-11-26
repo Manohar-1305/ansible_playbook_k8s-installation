@@ -5,7 +5,7 @@
   tasks:
     - name: Generate Join command
       command: kubeadm token create --print-join-command
-      register: join_command 
+      register: join_command  # Renamed the variable to join_command (using underscore)
       environment:
         KUBECONFIG: /home/ansible-user/.kube/config
       changed_when: false
@@ -22,4 +22,3 @@
       command: "{{ hostvars['master1']['kubeadm_join_command'] }}"
       environment:
         KUBECONFIG: /home/ansible-user/.kube/config
-
