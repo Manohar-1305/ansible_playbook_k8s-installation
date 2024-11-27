@@ -1,0 +1,34 @@
+---
+- name: Apply labels to Kubernetes nodes
+  hosts: controlplane,nodes
+  gather_facts: false
+
+  tasks:
+    - name: Define node groups
+      set_fact:
+        controlplane_nodes:
+          - master1
+          - master2
+          - master3
+        worker_nodes:
+          - worker1
+          - worker2
+          - worker3
+
+    - name: Label controlplane nodes with control-plane role
+      when: inventory_hostname in controlplane_nodes
+      loop: "{{ controlplane_nodes }}"
+      command: kubectl label node {{ item }} node-role.kubernetes.io/control-plane=true --overwrite
+
+    - name: Label worker nodes with worker role
+      when: inventory_hostname in worker_nodes
+      loop: "{{ worker_nodes }}"
+      command: kubectl label node {{ item }} node-role.kubernetes.io/worker=true --overwrite
+
+    - name: Verify node labels
+      shell: kubectl get nodes --show-labels
+      register: verify_output
+
+    - name: Display verification output
+      debug:
+        var: verify_output.stdout_lines
