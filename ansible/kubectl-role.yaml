@@ -1,0 +1,8 @@
+---
+- name: Install kubectl and fetch Kubernetes admin config
+  hosts: local
+  become: yes
+  tasks:
+    - name: Import Helm Role
+      import_role:
+        name: kubectl_role
