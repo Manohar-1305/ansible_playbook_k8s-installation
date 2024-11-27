@@ -9,4 +9,5 @@
 - import_playbook: join_workers.yaml hostlist=k8s_node
 - import_playbook: kubectl_role.yaml hostlist=local
 - import_playbook: install_cni.yaml hostlist=node
+- import_playbook: worker_labels.yaml hostlist=node
 
