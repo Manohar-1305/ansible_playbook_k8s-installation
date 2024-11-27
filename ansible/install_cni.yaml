@@ -1,6 +1,6 @@
 ---
 - name: Add Cilium Helm repository and install Cilium
-  hosts: k8s_node
+  hosts: master1
   gather_facts: false
 
   tasks:
