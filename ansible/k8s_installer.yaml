@@ -6,4 +6,4 @@
 - import_playbook: first-master.yaml hostlist=master1
 - import_playbook: join_masters.yaml hostlist=master2:master3
 - import_playbook: join_workers.yaml hostlist=node
-- import_playbook: setup_kubectl_and_kubeconfig.yaml hostlist=local
+- import_playbook: kubectl_role.yaml hostlist=local
