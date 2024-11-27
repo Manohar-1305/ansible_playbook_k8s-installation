@@ -1,34 +1,25 @@
 ---
-- name: Apply labels to Kubernetes nodes
-  hosts: controlplane,nodes
+- name: Apply label to all Kubernetes nodes
+  hosts: master1,master2,master3
   gather_facts: false
 
   tasks:
-    - name: Define node groups
-      set_fact:
-        controlplane_nodes:
-          - master1
-          - master2
-          - master3
-        worker_nodes:
-          - worker1
-          - worker2
-          - worker3
+    - name: Get the list of all Kubernetes nodes
+      shell: kubectl get nodes | awk '{print $1}'
+      register: node_list
 
-    - name: Label controlplane nodes with control-plane role
-      when: inventory_hostname in controlplane_nodes
-      loop: "{{ controlplane_nodes }}"
+    - name: Remove header from node list
+      set_fact:
+        nodes: "{{ node_list.stdout_lines[1:] }}"
+
+    - name: Label each node with control-plane role
+      loop: "{{ nodes }}"
       command: kubectl label node {{ item }} node-role.kubernetes.io/control-plane=true --overwrite
 
-    - name: Label worker nodes with worker role
-      when: inventory_hostname in worker_nodes
-      loop: "{{ worker_nodes }}"
-      command: kubectl label node {{ item }} node-role.kubernetes.io/worker=true --overwrite
-
-    - name: Verify node labels
-      shell: kubectl get nodes --show-labels
-      register: verify_output
-
+    - name: Label the same master node with empty control-plane label
+      loop: "{{ nodes }}"
+      when: item == ansible_hostname # Replace with the condition to identify your master node
+      command: kubectl label nodes {{ item }} node-role.kubernetes.io/control-plane="" --overwrite
     - name: Display verification output
       debug:
         var: verify_output.stdout_lines
