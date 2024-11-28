@@ -1,0 +1,53 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install NFS packages
+  apt:
+    name:
+      - nfs-common
+      - nfs-kernel-server
+    state: present
+
+- name: Create NFS export directory
+  file:
+    path: "{{ nfs_export_dir }}"
+    state: directory
+    owner: nobody
+    group: nogroup
+    mode: "0775"
+
+- name: Set group read-write-execute permissions and setgid on NFS directory
+  file:
+    path: "{{ nfs_export_dir }}"
+    mode: "2775"
+    recurse: yes
+
+- name: Apply NFS export configuration from template
+  template:
+    src: nfs_exports.j2
+    dest: /etc/exports
+
+- name: Export NFS shares
+  command: exportfs -av
+  notify: Restart NFS server
+
+- name: Ensure NFS server is enabled and started
+  systemd:
+    name: nfs-kernel-server
+    enabled: yes
+    state: started
+
+- name: Verify NFS exports
+  command: /sbin/showmount -e localhost
+  register: showmount_output
+
+- debug:
+    msg: "{{ showmount_output.stdout }}"
+
+# Handlers
+- name: Restart NFS server
+  systemd:
+    name: nfs-kernel-server
+    state: restarted
