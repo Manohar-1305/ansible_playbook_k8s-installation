@@ -1,0 +1,8 @@
+---
+- name: Setup NFS Server
+  hosts: nfs
+  become: yes
+  tasks:
+    - name: Setup NFS Server
+      import_role:
+        name: nfs
