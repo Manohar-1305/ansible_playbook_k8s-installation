@@ -44,6 +44,9 @@
     --set storageClass.onDelete={{ storage_class_delete_behavior | lower }}
   args:
     chdir: /tmp
+  delegate_to: worker1
+
+
 
 # Check storage class status
 - name: Check storage class status
@@ -63,4 +66,3 @@
 - name: Display storage class status
   debug:
     msg: "{{ storageclass_output.stdout }}"
-
