@@ -10,5 +10,6 @@
 - import_playbook: add_labels_worker.yaml hostlist=controlplane
 - import_playbook: install_cni.yaml hostlist=node
 - import_playbook: kubectl_role.yaml hostlist=local
+- import_playbook: aws_cloud_controller.yaml hostlist=k8s_node
 - import_playbook: nfs.yaml hostlist=nfs-server
 - import_playbook: nfs-setup.yaml hostlist=k8s_node
