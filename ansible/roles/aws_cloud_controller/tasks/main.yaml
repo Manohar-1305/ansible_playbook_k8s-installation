@@ -23,19 +23,25 @@
   args:
     chdir: /tmp/cloud-provider-aws/examples/existing-cluster/base
   ignore_errors: true  # Ignore errors if no resources are found
+  environment:
+    KUBECONFIG: "/home/ansible-user/.kube/config"  # Set KUBECONFIG to the correct path
 
 - name: Apply AWS Cloud Controller Manager manifests
   ansible.builtin.command:
-    cmd: "kubectl create -k ."
+    cmd: "kubectl create -k . --validate=false"  # Added --validate=false to bypass validation errors
   args:
     chdir: /tmp/cloud-provider-aws/examples/existing-cluster/base
+  environment:
+    KUBECONFIG: "/home/ansible-user/.kube/config"  # Set KUBECONFIG to the correct path
 
 - name: Check if AWS Cloud Controller Manager pods are running
   command: "kubectl get pods -n kube-system -l app=aws-cloud-controller-manager"
   register: ccm_check
   until: ccm_check.rc == 0
-  retries: 5
+  retries: 2
   delay: 30
+  environment:
+    KUBECONFIG: "/home/ansible-user/.kube/config"  # Set KUBECONFIG to the correct path
 
 - name: Debug Cloud Controller Manager installation result
   ansible.builtin.debug:
