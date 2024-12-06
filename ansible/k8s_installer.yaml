@@ -12,5 +12,5 @@
 - import_playbook: kubectl_role.yaml hostlist=local
 - import_playbook: nfs.yaml hostlist=nfs-server
 - import_playbook: nfs-setup.yaml hostlist=k8s_node
-- import_playbook: label_controlplane.yaml hostlist=k8s_node
+- import_playbook: label_controlplane.yaml hostlist=master1
 - import_playbook: aws_cloud_controller.yaml hostlist=local
