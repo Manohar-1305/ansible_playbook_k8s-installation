@@ -12,7 +12,7 @@
         msg: "Control-plane nodes found: {{ control_plane_nodes.stdout_lines }}"
 
     - name: Label each control-plane node
-      shell: kubectl label node {{ item }} node-role.kubernetes.io/control-plane=""
+      shell: kubectl label node {{ item }} node-role.kubernetes.io/control-plane="" --overwrite
       loop: "{{ control_plane_nodes.stdout_lines }}"
       ignore_errors: true
 
