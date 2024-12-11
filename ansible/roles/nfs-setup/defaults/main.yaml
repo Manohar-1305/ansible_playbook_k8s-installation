@@ -1,13 +1,7 @@
-<<<<<<< HEAD
-nfs_ip: "10.200.1.45"  # Default NFS server IP
-nfs_path: "/mnt/myshare"  # Default NFS export path
-helm_repo_url: "https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner"
-storage_class_name: "nfs-client"
-storage_class_delete_behavior: true
-=======
+
 nfs_ip: "10.200.1.45"  
 nfs_path: "/mnt/myshare"  
 helm_repo_url: "https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner"
 storage_class_name: "nfs-client"
 storage_class_delete_behavior: true
->>>>>>> 8268c6b (added files)
+
