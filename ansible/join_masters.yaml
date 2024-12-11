@@ -1,29 +1,4 @@
-<<<<<<< HEAD
----
-- name: Generate Join command for new masters
-  hosts: master1
-  become: yes
-  tasks:
-    - name: Generate Join command
-      command: kubeadm token create --print-join-command
-      register: join_command  # Renamed the variable to join_command (using underscore)
-      environment:
-        KUBECONFIG: /home/ansible-user/.kube/config
-      changed_when: false
 
-    - name: Set join command as fact
-      set_fact:
-        kubeadm_join_command: "{{ join_command.stdout }}"
-
-- name: Add new masters to cluster
-  hosts: master2, master3
-  become: yes
-  tasks:
-    - name: Join Master 2 and Master3 to cluster
-      command: "{{ hostvars['master1']['kubeadm_join_command'] }}"
-      environment:
-        KUBECONFIG: /home/ansible-user/.kube/config
-=======
 - name: Generate Join command for new masters
   hosts: master1
   become: yes
@@ -47,4 +22,4 @@
       command: "{{ hostvars['master1']['kubeadm_join_command']}}"
       enviroment:
         KUBECONFIG: / home/ansible-user/.kube/config
->>>>>>> 8268c6b (added files)
+
