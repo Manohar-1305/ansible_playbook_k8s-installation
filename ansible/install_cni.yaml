@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ---
 - name: Add Cilium Helm repository and install Cilium
   hosts: master1
@@ -14,20 +14,4 @@
 
     - name: Install Cilium using Helm
       ansible.builtin.shell: "helm install cilium cilium/cilium --version 1.16.4 --namespace kube-system"
-=======
----
-- name: Add Cilium Helm repository and install Cilium
-  hosts: master1
-  gather_facts: false
 
-  tasks:
-    - name: Add Cilium Helm repository
-      ansible.builtin.shell: "helm repo add cilium https://helm.cilium.io/"
-
-    - name: Update Helm repositories
-      ansible.builtin.command:
-        cmd: "helm repo update"
-
-    - name: Install Cilium using Helm
-      ansible.builtin.shell: "helm install cilium cilium/cilium --version 1.16.4 --namespace kube-system"
->>>>>>> 8268c6b (added files)
