@@ -3,6 +3,8 @@ resource "aws_vpc" "dev_vpc" {
 
   tags = {
     Name = "dev_vpc"
+    "kubernetes.io/cluster/kubernetes" = "owned"
+
   }
 }
 
@@ -11,5 +13,6 @@ resource "aws_internet_gateway" "dev_public_igw" {
 
   tags = {
     Name = "dev_public_igw"
+    "kubernetes.io/cluster/kubernetes" = "owned"
   }
 }
