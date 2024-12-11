@@ -8,7 +8,11 @@
     force_apt_get: yes
 
 - name: Disable swap
-  shell: "sudo swapoff -a && sudo sed -i 'swap/d' /etc/fstab"
+  shell: |
+    sudo swapoff -a
+    sudo sed -i '/swap/d' /etc/fstab
+  become: yes
+
 
 - name: Install dependencies package
   apt:
