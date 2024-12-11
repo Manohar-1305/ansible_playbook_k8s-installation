@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ---
 - import_playbook: k8s-setup.yaml hostlist=k8s_node
 - import_playbook: time-sync.yaml hostlist=k8s_node
@@ -15,19 +15,4 @@
 - import_playbook: nfs-setup.yaml hostlist=k8s_node
 - import_playbook: label_controlplane.yaml hostlist=master1
 - import_playbook: aws_cloud_controller.yaml hostlist=local
-=======
----
-- import_playbook: k8s-setup.yaml hostlist=k8s_node
-- import_playbook: time-sync.yaml hostlist=k8s_node
-- import_playbook: helm-install.yaml hostlist=k8s_node
-- import_playbook: kubernetes_role.yaml hostlist=k8s_node
-- import_playbook: first-master.yaml hostlist=master1
-- import_playbook: join_masters.yaml hostlist=master2:master3
-- import_playbook: add_label_master.yaml hostlist=controlplane
-- import_playbook: join_workers.yaml hostlist=master1
-- import_playbook: add_label_worker.yaml hostlist=controlplane
-- import_playbook: install_cni.yaml hostlist=node
-- import_playbook: kubectl_role.yaml hostlist=local
-- import_playbook: nfs.yaml hostlist=nfs-server
-- import_playbook: nfs-setup.yaml hostlist=k8s_node
->>>>>>> 8268c6b (added files)
+
