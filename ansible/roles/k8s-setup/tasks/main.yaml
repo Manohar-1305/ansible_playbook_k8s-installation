@@ -1,36 +1,35 @@
-
+---
 - name: Update apt package
-  become: yes
   apt:
     update_cache: yes
+    cache_valid_time: 3600  # Optional, sets the cache timeout to 1 hour
 
 - name: Load Necessary Kernel Modules
   shell: |
     modprobe overlay
     modprobe br_netfilter
-
+  become: yes
 
 - name: Ensure Kernel Modules are loaded on Boot
-  become: yes
   copy:
     content: |
       overlay
       br_netfilter
     dest: /etc/modules-load.d/containerd.conf
-
+  become: yes
 
 - name: Setup Sysctl Parameters for Kubernetes
-  become: yes
   copy:
     content: |
       net.bridge.bridge-nf-call-iptables  = 1
       net.ipv4.ip_forward                 = 1
       net.bridge.bridge-nf-call-ip6tables = 1
     dest: /etc/sysctl.d/99-kubernetes-cri.conf
+  become: yes
 
 - name: Apply sysctl Parameters
+  command: sysctl --system
   become: yes
-  command: sudo sysctl --system
 
 - name: Install Containerd
   apt:
@@ -61,6 +60,7 @@
   shell: containerd config dump | tee /dev/null
   register: validate_output
   failed_when: validate_output.rc != 0
+  become: yes
 
 - name: Set Cgroup driver as Systemd
   lineinfile:
@@ -76,7 +76,7 @@
     line: "SystemdCgroup = false"
     state: absent
   notify: restart containerd
-
+  become: yes
 
 - name: Copy the toml to /etc/containerd
   copy:
