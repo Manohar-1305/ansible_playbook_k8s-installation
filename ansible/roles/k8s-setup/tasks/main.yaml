@@ -68,9 +68,10 @@
 - name: Remove SystemdCgroup = false
   lineinfile:
     path: /tmp/containerd_config.toml
-    state:
     line: "SystemdCgroup = false"
+    state: absent
   notify: restart containerd
+
 
 - name: Copy the toml to /etc/containerd
   copy:
