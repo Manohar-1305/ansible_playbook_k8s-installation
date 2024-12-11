@@ -1,66 +1,47 @@
 ---
-- name: Update apt package
+# tasks to setup containerd
+- name: Update apt repositories
   apt:
     update_cache: yes
-    cache_valid_time: 3600  # Optional, sets the cache timeout to 1 hour
+    cache_valid_time: 3600
 
-- name: Load Necessary Kernel Modules
-  shell: |
-    modprobe overlay
-    modprobe br_netfilter
-  become: yes
-
-- name: Ensure Kernel Modules are loaded on Boot
+- name: Create containerd modules-load configuration
   copy:
+    dest: /etc/modules-load.d/containerd.conf
     content: |
       overlay
       br_netfilter
-    dest: /etc/modules-load.d/containerd.conf
-  become: yes
 
-- name: Setup Sysctl Parameters for Kubernetes
+- name: Load overlay module
+  modprobe:
+    name: overlay
+    state: present
+
+- name: Load br_netfilter module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Set sysctl parameters for Kubernetes
   copy:
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
     content: |
       net.bridge.bridge-nf-call-iptables  = 1
       net.ipv4.ip_forward                 = 1
       net.bridge.bridge-nf-call-ip6tables = 1
-    dest: /etc/sysctl.d/99-kubernetes-cri.conf
-  become: yes
 
-- name: Apply sysctl Parameters
+- name: Apply sysctl parameters
   command: sysctl --system
-  become: yes
 
-- name: Install Containerd
+- name: Install containerd
   apt:
     name: containerd
     state: present
-  become: yes
 
-- name: Ensure containerd config directory is present
+- name: Ensure containerd configuration directory exists
   file:
     path: /etc/containerd
     state: directory
-  become: yes
-
-- name: Get default containerd config
-  command: containerd config default
-  register: containerd_config_default
-  changed_when: false
-  become: yes
-
-- name: Prepare containerd_config.toml from default config
-  copy:
-    dest: /tmp/containerd_config.toml
-    content: "{{ containerd_config_default.stdout }}"
-  changed_when: false
-  become: yes
-
-- name: Validate containerd configuration
-  shell: containerd config dump | tee /dev/null
-  register: validate_output
-  failed_when: validate_output.rc != 0
-  become: yes
 
 - name: Set Cgroup driver as Systemd
   lineinfile:
@@ -77,11 +58,24 @@
     state: absent
   notify: restart containerd
   become: yes
+  
+- name: Create containerd default config
+  command: containerd config default
+  register: containerd_config
+  changed_when: false
 
-- name: Copy the toml to /etc/containerd
+- name: Write containerd config to /etc/containerd/config.toml
   copy:
-    remote_src: true
-    src: /tmp/containerd_config.toml
-    dest: "{{ containerd_config_path }}"
-  notify: restart containerd
+    dest: /etc/containerd/config.toml
+    content: "{{ containerd_config.stdout }}"
+
+- name: Validate containerd configuration
+  shell: containerd config dump | tee /dev/null
+  register: validate_output
+  failed_when: validate_output.rc != 0
   become: yes
+- name: Restart containerd service
+  systemd:
+    name: containerd
+    state: restarted
+    enabled: yes
