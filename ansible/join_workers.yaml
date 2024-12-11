@@ -3,37 +3,36 @@
   become: yes
   gather_facts: no
   tasks:
-    - name: Generate  kubeadm join command
+    - name: Generate kubeadm join command
       shell: kubeadm token create --print-join-command --ttl 24h
       register: join_command_output
 
-    - name: set join command as fact
+    - name: Set join command as fact
       set_fact:
         join_command: "{{ join_command_output.stdout }}"
 
     - name: Save Join Command To a file
       copy:
         content: "{{ join_command }}"
-        dest: /etc/kubernetes/join_commnd.txt
+        dest: /etc/kubernetes/join_command.txt
 
     - name: Print Join Command
       debug:
         msg: "{{ join_command }}"
 
-    - name: Prepare worker nodes to add to  cluster
-      hosts: node
-      become: yes
-      gather_facts: no
-      vars:
-        join_command: "{{ hostvars['master1'].join_command }}"
-      tasks:
-        - name: Join Worker node to cluster
-          command: "{{ join_command }}"
-          enviroment:
-            KUBECONFIG: / home/ansible-user/.kube/config
+- name: Prepare worker nodes to add to cluster
+  hosts: node
+  become: yes
+  gather_facts: no
+  vars:
+    join_command: "{{ hostvars['master1'].join_command }}"
+  tasks:
+    - name: Join Worker node to cluster
+      command: "{{ join_command }}"
+      environment:
+        KUBECONFIG: /home/ansible-user/.kube/config
 
-    - name: Restart Kubelet after joining to the cluster
+    - name: Restart Kubelet after joining the cluster
       systemd:
-        name: Kubelet
+        name: kubelet
         state: restarted
-
