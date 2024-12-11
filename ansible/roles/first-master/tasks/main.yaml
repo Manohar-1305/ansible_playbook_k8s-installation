@@ -134,4 +134,4 @@
     content: "{{ join_command.stdout }}"
     dest: "{{ join_command_file }}"
   delegate_to: bastion
->>>>>>> 8268c6b (added files)
+
