@@ -4,6 +4,6 @@
   hosts: master1
   become: yes
   tasks:
-    - name: Initalsize first master1
+    - name: Initalize first master1
       import_role:
         name: first-master
