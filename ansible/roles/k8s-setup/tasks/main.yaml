@@ -77,4 +77,3 @@
     dest: "{{ containerd_config_path }}"
   notify: restart containerd
   become: yes
->>>>>>> 8268c6b (added files)
