@@ -1,18 +1,14 @@
-resource "aws_vpc" "dev_vpc" {
-  cidr_block = "10.20.0.0/16"
 
-  tags = {
-    Name = "dev_vpc"
-    "kubernetes.io/cluster/kubernetes" = "owned"
-
+terraform {
+  required_version = "<=1.6.6"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
   }
 }
-
-resource "aws_internet_gateway" "dev_public_igw" {
-  vpc_id = aws_vpc.dev_vpc.id
-
-  tags = {
-    Name = "dev_public_igw"
-    "kubernetes.io/cluster/kubernetes" = "owned"
-  }
+provider "aws" {
+  region  = var.region
+  profile = "default"
 }
