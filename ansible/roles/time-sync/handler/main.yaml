@@ -1,9 +1,5 @@
-<<<<<<< HEAD
+
 - name: Synchronize time immediately
   command: chronyc makestep
   ignore_errors: yes
-=======
-- name: Synchronize time immediately
-  command: chronyc makestep
-  ignore_errors: yes
->>>>>>> 8268c6b (added files)
+
