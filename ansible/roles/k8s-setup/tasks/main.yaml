@@ -12,9 +12,13 @@
     warn: false
 
 - name: Ensure Kernel Modules are loaded on Boot
-  copy: overlay
-    br_netfilter
-  dest: /etc/modules-load.d/containerd.conf
+  become: yes
+  copy:
+    content: |
+      overlay
+      br_netfilter
+    dest: /etc/modules-load.d/containerd.conf
+
 
 - name: Setup Sysctl Parameters for Kubernetes
   copy: net.bridge.bridge-nf-call-iptables  = 1
