@@ -6,10 +6,9 @@
 
 - name: Load Necessary Kernel Modules
   shell: |
-    sudo modprobe overlay
-    sudo modprobe br_netfilter
-  args:
-    warn: false
+    modprobe overlay
+    modprobe br_netfilter
+
 
 - name: Ensure Kernel Modules are loaded on Boot
   become: yes
