@@ -1,13 +1,7 @@
-<<<<<<< HEAD
+
 ---
 - name: Restart NFS server
   systemd:
     name: nfs-kernel-server
     state: restarted
-=======
----
-- name: Restart NFS server
-  systemd:
-    name: nfs-kernel-server
-    state: restarted
->>>>>>> 8268c6b (added files)
+
