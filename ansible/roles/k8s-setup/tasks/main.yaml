@@ -57,6 +57,11 @@
   changed_when: false
   become: yes
 
+- name: Validate containerd configuration
+  shell: containerd config dump | tee /dev/null
+  register: validate_output
+  failed_when: validate_output.rc != 0
+
 - name: Set Cgroup driver as Systemd
   lineinfile:
     insertafter: '.*\[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options\]$'
