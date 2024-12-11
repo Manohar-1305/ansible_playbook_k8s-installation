@@ -1,0 +1,13 @@
+---
+- name: kubeadm join master
+  hosts:
+    - master1
+    - master2
+  tasks:
+    - name: Copy join command to master nodes
+      copy:
+        src: /tmp/kubeadm-join-command.sh
+        dest: /tmp/kubeadm-join-command.sh
+
+    - name: Join cluster as master node
+      command: bash /tmp/kubeadm-join-command.sh

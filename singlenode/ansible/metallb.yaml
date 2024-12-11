@@ -1,0 +1,10 @@
+---
+- name: Join Kubernetes Node to Cluster
+  hosts: k8s_node
+  become: yes
+  tasks:
+    - name: configure metallb
+      import_role:
+        roles:
+        - metallb
+

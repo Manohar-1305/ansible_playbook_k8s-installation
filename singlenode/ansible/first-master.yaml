@@ -1,0 +1,8 @@
+---
+- name: setup_kubectl
+  hosts: local
+  become: yes
+  tasks:
+    - name: initialize the master0
+      import_role:
+        name: first-master

@@ -1,0 +1,63 @@
+- name: Download kubectl
+  get_url:
+    url: https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.0/2024-05-12/bin/linux/amd64/kubectl
+    dest: /usr/local/bin/kubectl
+    mode: "0755"
+
+- name: Ensure kubectl is executable
+  file:
+    path: /usr/local/bin/kubectl
+    mode: "0755"
+    state: file
+
+- name: Ensure $HOME/bin directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/bin"
+    state: directory
+    mode: "0755"
+
+- name: Copy kubectl to $HOME/bin
+  copy:
+    src: /usr/local/bin/kubectl
+    dest: "{{ ansible_env.HOME }}/bin/kubectl"
+    mode: "0755"
+
+- name: Ensure kubectl is in PATH
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: "export PATH=$HOME/bin:$PATH"
+    create: yes
+
+- name: Create .kube directory
+  file:
+    path: /home/ansible-user/.kube
+    state: directory
+    owner: ansible-user
+    group: ansible-user
+    mode: "0755"
+
+- name: Check if admin.conf already exists locally
+  stat:
+    path: /tmp/admin.conf # Path where you want to store admin.conf locally
+  register: admin_conf_stat
+
+
+- name: Fetch Kubernetes config from remote node
+  fetch:
+    src: /tmp/admin.conf
+    dest: /home/ansible-user/.kube/config
+    flat: yes
+
+- name: Clean up temporary admin.conf on remote node
+  become: yes
+  ansible.builtin.file:
+    path: /tmp/admin.conf
+    state: absent
+  when: admin_conf_stat.stat.exists
+- name: Set ownership and permissions of fetched config file on Ansible control node
+  file:
+    path: /home/ansible-user/.kube/config
+    owner: ansible-user
+    group: ansible-user
+    mode: "0644"
+    state: file

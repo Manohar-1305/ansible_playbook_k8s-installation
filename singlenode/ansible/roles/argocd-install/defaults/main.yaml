@@ -1,0 +1,6 @@
+---
+argo_helm_repo: https://argoproj.github.io/argo-helm
+argo_chart_name: argo/argo-cd
+argo_release_name: argocd
+argo_namespace: argo-cd
+argo_service_type: NodePort

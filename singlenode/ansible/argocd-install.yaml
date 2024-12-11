@@ -1,0 +1,8 @@
+---
+- name: install argocd
+  hosts: k8s_node
+  become: yes
+  tasks:
+    - name: Install argocd
+      import_role:
+        name: argocd-install

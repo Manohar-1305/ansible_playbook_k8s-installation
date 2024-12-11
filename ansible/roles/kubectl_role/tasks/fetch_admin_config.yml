@@ -1,0 +1,63 @@
+<<<<<<< HEAD
+---
+- name: Check if admin.conf already exists locally
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: admin_conf_stat
+
+- name: Fetch admin.conf from remote node if not already fetched
+  delegate_to: master1
+  become: yes
+  fetch:
+    remote_src: yes
+    src: /etc/kubernetes/admin.conf
+    dest: /tmp/admin.conf
+    flat: yes
+  when: not admin_conf_stat.stat.exists
+
+- name: Fetch Kubernetes config from remote node
+  delegate_to: master1
+  fetch:
+    src: /tmp/admin.conf
+    dest: "{{ kube_config_file }}"
+    flat: yes
+
+- name: Clean up temporary admin.conf on remote node
+  delegate_to: master1
+  become: yes
+  ansible.builtin.file:
+    path: /tmp/admin.conf
+    state: absent
+  when: admin_conf_stat.stat.exists
+=======
+--- 
+- name: Check if admin.conf already exists locally
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: admin_conf_stat
+
+- name: Fetch admin.conf from remote node if not already fetched
+  delegate_to: master1
+  become: yes
+  fetch:
+    remote_src: yes
+    src: /etc/kubernetes/admin.conf
+    dest: /tmp/admin.conf
+    flat: yes
+  when: not admin_conf_stat.stat.exists
+
+- name: Fetch Kubernetes config from remote node
+  delegate_to: master1
+  fetch:
+    src: /tmp/admin.conf
+    dest: "{{ kube_config_file }}"
+    flat: yes
+
+- name: Clean up temporary admin.conf on remote node
+  delegate_to: master1
+  become: yes
+  ansible.builtin.file:
+    path: /tmp/admin.conf
+    state: absent
+  when: admin_conf_stat.stat.exists
+>>>>>>> 8268c6b (added files)

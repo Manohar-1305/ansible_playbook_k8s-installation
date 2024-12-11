@@ -1,0 +1,50 @@
+---
+- name: Install kubectl and configure environment
+  hosts: local
+  become: yes
+  vars:
+    kubectl_url: "https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.0/2024-05-12/bin/linux/amd64/kubectl"  
+    kubectl_dest: "/usr/local/bin/kubectl" 
+    kubectl_bin_dest: "/home/ansible-user/bin/kubectl" 
+    kube_config_dir: "/home/ansible-user/.kube" 
+    kube_config_file: "{{ kube_config_dir }}/config" 
+    home_bin_dir: "/home/ansible-user/bin" 
+
+  tasks:
+    - name: Download kubectl
+      get_url:
+        url: "{{ kubectl_url }}"
+        dest: "{{ kubectl_dest }}"
+        mode: "0755"
+
+    - name: Ensure kubectl is executable
+      file:
+        path: "{{ kubectl_dest }}"
+        mode: "0755"
+        state: file
+
+    - name: Ensure /home/ansible-user/bin directory exists
+      file:
+        path: "{{ home_bin_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Copy kubectl to /home/ansible-user/bin
+      copy:
+        src: "{{ kubectl_dest }}"
+        dest: "{{ kubectl_bin_dest }}"
+        mode: "0755"
+
+    - name: Ensure kubectl is in PATH
+      lineinfile:
+        path: "/home/ansible-user/.bashrc"
+        line: "export PATH=/home/ansible-user/bin:$PATH"
+        create: yes
+
+    - name: Create .kube directory
+      file:
+        path: "{{ kube_config_dir }}"
+        state: directory
+        owner: ansible-user
+        group: ansible-user
+        mode: "0755"

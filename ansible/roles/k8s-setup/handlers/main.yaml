@@ -1,0 +1,11 @@
+<<<<<<< HEAD
+- name: restart containerd
+  service:
+    name: containerd
+    state: restarted
+=======
+- name: restart containerd
+  service:
+    name: containerd
+    state: restarted
+>>>>>>> 8268c6b (added files)

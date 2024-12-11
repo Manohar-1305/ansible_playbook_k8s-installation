@@ -1,0 +1,9 @@
+
+---
+- name: configure cni
+  hosts: local
+  tasks:
+    - name: Import Calico Networking role
+      import_role:
+        name: cilium
+

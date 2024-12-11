@@ -1,0 +1,7 @@
+---
+- name: Synchronize time on all servers
+  hosts: k8s_node
+  become: yes
+
+  roles:
+    - time-sync

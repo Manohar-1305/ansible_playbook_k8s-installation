@@ -1,0 +1,22 @@
+- name: Ensure admin.conf is present locally
+  hosts: local
+  become: no
+  gather_facts: no
+  tasks:
+    - name: Check if admin.conf already exists locally
+      stat:
+        path: /etc/kubernetes/admin.conf
+      register: admin_conf_stat
+
+    - name: Check if admin.conf exists on controller
+      stat:
+        path: /etc/kubernetes/admin.conf
+      register: kubernetes_admin_conf
+
+    - name: Fetch admin.conf from master1 if not already fetched
+      fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: /tmp/admin.conf
+        flat: yes
+      when: not admin_conf_stat.stat.exists
+      delegate_to: master1

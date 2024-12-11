@@ -1,0 +1,19 @@
+<<<<<<< HEAD
+---
+- name: Install kubectl and fetch Kubernetes admin config
+  hosts: local
+  become: yes
+  tasks:
+    - name: Import kubectl Role
+      import_role:
+        name: kubectl_role
+=======
+---
+- name: Install kubectl and fetch Kubernetes admin config
+  hosts: local
+  become: yes
+  tasks:
+    - name: Import kubectl Role
+      import_role:
+        name: kubectl_role
+>>>>>>> 8268c6b (added files)

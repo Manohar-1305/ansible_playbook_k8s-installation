@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaskapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flaskapp
+  template:
+    metadata:
+      labels:
+        app: flaskapp
+    spec:
+      containers:
+        - name: flaskapp
+          image: manoharshetty507/microservices:v1 # Correct image name
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "admin123"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "admin123"
+            - name: MONGO_HOST
+              value: "mongodb"
+            - name: MONGO_PORT
+              value: "27017"
+      imagePullSecrets:
+        - name: myregistrykey # Ensure this matches your secret name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flaskapp
+spec:
+  ports:
+    - port: 5000
+      targetPort: 5000
+  selector:
+    app: flaskapp
+  type: NodePort
+#kubectl create secret docker-registry myregistrykey --docker-server=https://index.docker.io/v1/ --docker-username=manoharshetty507  --docker-password=Manohar@2021

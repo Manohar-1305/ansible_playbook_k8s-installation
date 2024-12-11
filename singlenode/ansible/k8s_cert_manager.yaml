@@ -1,0 +1,8 @@
+---
+- name: install cert manager
+  hosts: local
+  become: yes
+  tasks:
+    - name: Install cert manager
+      import_role:
+        name: k8s_cert_manager

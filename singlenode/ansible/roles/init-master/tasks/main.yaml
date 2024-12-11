@@ -1,0 +1,82 @@
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Gather facts
+  ansible.builtin.setup:
+- name: Remove swap entries from /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^.*swap.*$'
+    replace: ''
+  when: ansible_swaptotal_mb > 0
+
+
+- name: Gather facts
+  ansible.builtin.setup:
+
+- name: Ensure swap is not mounted
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Remove swap entries from /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^.*swap.*$'
+    replace: ''
+  when: ansible_swaptotal_mb > 0
+
+- name: Ensure swap is disabled in mount
+  mount:
+    name: none
+    path: swap
+    state: absent
+  when: ansible_swaptotal_mb > 0
+
+
+- name: Reboot the system to apply changes
+  reboot:
+    msg: "Reboot initiated by Ansible to disable swap"
+    connect_timeout: 5
+    reboot_timeout: 600
+  when: ansible_swaptotal_mb > 0
+
+- name: Display kubelet service status
+  debug:
+    var: kubelet_status.stdout_lines
+
+- name: Check kubelet logs
+  shell: journalctl -xeu kubelet --no-pager
+  register: kubelet_logs
+
+- name: Display kubelet logs
+  debug:
+    var: kubelet_logs.stdout_lines
+
+- name: Check if kubeadm config images are pulled
+  command: "kubeadm config images list"
+  register: kubeadm_images
+  changed_when: false # Mark this task as not changed if the command output is as expected
+
+- name: Pull the correct sandbox image version
+  command: ctr images pull registry.k8s.io/pause:3.9
+  register: pull_sandbox_image
+  ignore_errors: yes
+
+- name: Set cgroup driver in kubelet configuration
+  lineinfile:
+    path: /etc/default/kubelet
+    line: 'KUBELET_EXTRA_ARGS="--cgroup-driver=systemd"'
+    create: yes
+
+- name: Restart kubelet service to apply cgroup changes
+  systemd:
+    name: kubelet
+    state: restarted
+    enabled: yes
+
+- name: Pull kubeadm config images if not already pulled
+  command: "kubeadm config images pull"
+  when: kubeadm_images.stdout.find('image1') == -1
+

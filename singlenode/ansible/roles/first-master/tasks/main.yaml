@@ -1,0 +1,117 @@
+- name: Pull the correct pause image
+  command: ctr --namespace k8s.io image pull registry.k8s.io/pause:3.9
+  become: true
+
+- name: Ensure /etc/kubernetes directory exists
+  file:
+    path: /etc/kubernetes
+    state: directory
+    mode: '0755'
+
+- name: Copy kubeadm configuration
+  template:
+    src: roles/first-master/templates/config.yaml.j2
+    dest: /etc/kubernetes/kubeadm-config.yaml
+    mode: '0644'
+
+- name: Check if kubeadm config file exists
+  stat:
+    path: /etc/kubernetes/kubeadm-config.yaml
+  register: kubeadm_config
+
+- name: Debug kubeadm config existence
+  delegate_to: local
+  debug:
+    msg: "Kubeadm config file exists: {{ kubeadm_config.stat.exists }}"
+
+- name: Initialize the Kubernetes master
+  shell: "kubeadm init --pod-network-cidr=192.168.0.0/16 --ignore-preflight-errors=NumCPU --ignore-preflight-errors=Mem"
+  when: kubeadm_config.stat.exists
+  register: kubeadm_init
+  failed_when: kubeadm_init.rc != 0
+  ignore_errors: yes
+
+- name: Check if /etc/kubernetes directory exists
+  stat:
+    path: /etc/kubernetes
+  register: kubernetes_dir
+
+- name: Print status message based on directory existence
+  debug:
+    msg: "/etc/kubernetes folder {{ 'exists' if kubernetes_dir.stat.exists else 'does not exist' }}."
+
+- name: Check if Kubernetes is already initialized (kube-apiserver)
+  stat:
+    path: /etc/kubernetes/manifests/kube-apiserver.yaml
+  register: k8s_apiserver_initialized
+
+- name: Check if Kubernetes is initialized
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: k8s_initialized
+
+- name: Create .kube folder for ansible-user
+  become: yes
+  file:
+    path: "/home/ansible-user/.kube"
+    state: directory
+    owner: ansible-user
+    group: ansible-user
+    mode: "0755"
+  when: k8s_initialized is not defined or not k8s_initialized.stat.exists
+
+- name: Copy admin.conf to .kube folder for ansible-user
+  become: yes
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/ansible-user/.kube/config
+    owner: ansible-user
+    group: ansible-user
+    mode: "0644"
+    remote_src: yes
+  when: k8s_initialized is not defined or not k8s_initialized.stat.exists
+
+- name: Create .kube folder for root
+  file:
+    path: "/root/.kube"
+    state: directory
+    owner: "root"
+    mode: "0755"
+
+- name: Copy admin.conf to .kube folder for root
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/root/.kube/config"
+    owner: "root"
+    mode: "0644"
+    remote_src: yes
+
+- name: Copy admin.conf
+  become: yes
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /tmp/admin.conf
+    remote_src: yes
+
+- name: Change permissions of admin.conf to ansible-user readable
+  file:
+    path: /etc/kubernetes/admin.conf
+    owner: ansible-user
+    group: ansible-user
+    mode: "0644"
+
+- name: Enable IPtables Bridge Firewall Rule
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+    reload: yes
+
+- name: Generate join token
+  command: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Save join command to file
+  copy:
+    content: "{{ join_command.stdout }}"
+    dest: /tmp/kubeadm-join-command.sh

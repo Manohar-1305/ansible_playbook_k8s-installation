@@ -1,0 +1,23 @@
+---
+- name: Label non-control plane nodes as worker
+  hosts: master1
+  gather_facts: false
+
+  tasks:
+    - name: Get list of all nodes excluding control-plane
+      shell: kubectl get nodes --no-headers --kubeconfig=/home/ansible-user/.kube/config | grep -v 'control-plane' | awk '{print $1}'
+      register: node_list
+
+    - name: Apply worker label to each node
+      shell: kubectl label node {{ item }} node-role.kubernetes.io/worker=true --overwrite --kubeconfig=/home/ansible-user/.kube/config
+      loop: "{{ node_list.stdout_lines }}"
+      when: node_list.stdout_lines is defined
+
+    - name: Verify worker label
+      shell: kubectl get nodes -l node-role.kubernetes.io/worker=true --kubeconfig=/home/ansible-user/.kube/config
+      register: verify_output
+      changed_when: false
+
+    - name: Display verification output
+      debug:
+        var: verify_output.stdout_lines

@@ -1,0 +1,16 @@
+---
+- import_playbook: k8s-setup.yaml  hostlist=k8s_node
+- import_playbook: time-sync.yaml  hostlist=k8s_node
+- import_playbook: init-master.yml  hostlist=k8s_node
+- import_playbook: first-master.yaml  hostlist=local
+- import_playbook: copy-admin-conf.yaml    hostlist=k8s_node
+- import_playbook: kubectl-local.yaml    hostlist=local
+- import_playbook: configure_cni.yaml hostlist=k8s_node
+- import_playbook: label-nodes.yaml hostlist=local
+- import_playbook: join_worker_nodes.yaml hostlist=node
+- import_playbook: argocd-install.yaml hostlist=local
+- import_playbook: aws_cloud_controller.yaml hostlist=k8s_node
+- import_playbook: nfs.yaml hostlist=local
+- import_playbook: nfs-setup-playbook.yaml hostlist=local
+- import_playbook: nfs-setup.yaml hostlist=local,node
+- import_playbook: k8s_cert_manager.yaml hostlist=local

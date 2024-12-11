@@ -1,0 +1,35 @@
+---
+- name: Apply label to all Kubernetes nodes
+  hosts: local
+  gather_facts: false
+
+  tasks:
+    - name: Get the list of all Kubernetes nodes
+      shell: kubectl get nodes | awk '{print $1}'
+      register: node_list
+
+    - name: Remove header from node list
+      set_fact:
+        nodes: "{{ node_list.stdout_lines[1:] }}"
+
+    - name: Label each node with control-plane role
+      loop: "{{ nodes }}"
+      command: kubectl label node {{ item }} node-role.kubernetes.io/control-plane=true --overwrite
+
+    - name: Label the master node with an empty control-plane label
+      loop: "{{ nodes }}"
+      when: item == ansible_hostname  # Condition to identify the master node
+      command: kubectl label node {{ item }} node-role.kubernetes.io/control-plane="" --overwrite
+
+    - name: Label a specific worker node
+      command: kubectl label node {{ hostvars['node'].ansible_host }} node-role.kubernetes.io/control-plane= --overwrite
+      delegate_to: node  # Delegate to the specific worker node
+      ignore_errors: yes  # Optional: Ignore errors if the label is already applied
+
+    - name: Verify control-plane label
+      command: kubectl get nodes --show-labels
+      register: verify_output
+
+    - name: Display verification output
+      debug:
+        var: verify_output.stdout_lines

@@ -1,0 +1,31 @@
+---
+- name: fetch config
+  hosts: local
+  become: yes
+  gather_facts: false
+  environment:
+    KUBECONFIG: "{{ kubeconfig_path }}"
+  tasks:
+    - name: Create temporary file to store kubeconfig
+      tempfile:
+        state: file
+        prefix: kubeconfig
+      register: tmp_kubeconfig
+    - name: Fetch kubeconfig
+      fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: "{{ tmp_kubeconfig.path }}"
+        flat: yes
+    - name: Add dynamic variable for kubeconfig path in ansible host
+      add_host:
+        name: "dynamic_vars_holder"
+        tmp_kubeconfig_path: "{{ tmp_kubeconfig.path }}"
+
+    - name: Configuring Networking
+      command: kubectl get pods -n kube-system | grep calico
+      register: calico_installed
+      ignore_errors: true
+
+    - name: Apply Calico networking if not already applied
+      command: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+      when: calico_installed.rc != 0

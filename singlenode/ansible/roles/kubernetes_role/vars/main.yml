@@ -1,0 +1,7 @@
+---
+# roles/kubernetes/vars/main.yml
+
+kubernetes_version: "1.29.0-1.1"
+containerd_config_path: "/etc/containerd/config.toml"
+calico_manifest_url: "https://raw.githubusercontent.com/projectcalico/calico/v3.26.4/manifests/calico.yaml"
+pod_network_cidr: "192.168.0.0/16"

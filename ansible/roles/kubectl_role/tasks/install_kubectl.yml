@@ -1,0 +1,79 @@
+<<<<<<< HEAD
+---
+- name: Download kubectl
+  get_url:
+    url: "{{ kubectl_url }}"
+    dest: "{{ kubectl_dest }}"
+    mode: "0755"
+
+- name: Ensure kubectl is executable
+  file:
+    path: "{{ kubectl_dest }}"
+    mode: "0755"
+    state: file
+
+- name: Ensure /home/ansible-user/bin directory exists
+  file:
+    path: "{{ home_bin_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copy kubectl to /home/ansible-user/bin
+  copy:
+    src: "{{ kubectl_dest }}"
+    dest: "{{ kubectl_bin_dest }}"
+    mode: "0755"
+
+- name: Ensure kubectl is in PATH
+  lineinfile:
+    path: "/home/ansible-user/.bashrc"
+    line: "export PATH=/home/ansible-user/bin:$PATH"
+    create: yes
+
+- name: Create .kube directory
+  file:
+    path: "{{ kube_config_dir }}"
+    state: directory
+    owner: ansible-user
+    group: ansible-user
+    mode: "0755"
+=======
+---
+- name: Download kubectl
+  get_url:
+    url: "{{ kubectl_url }}"
+    dest: "{{ kubectl_dest }}"
+    mode: "0755"
+
+- name: Ensure kubectl is executable
+  file:
+    path: "{{ kubectl_dest }}"
+    mode: "0755"
+    state: file
+
+- name: Ensure /home/ansible-user/bin directory exists
+  file:
+    path: "{{ home_bin_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copy kubectl to /home/ansible-user/bin
+  copy:
+    src: "{{ kubectl_dest }}"
+    dest: "{{ kubectl_bin_dest }}"
+    mode: "0755"
+
+- name: Ensure kubectl is in PATH
+  lineinfile:
+    path: "/home/ansible-user/.bashrc"
+    line: "export PATH=/home/ansible-user/bin:$PATH"
+    create: yes
+
+- name: Create .kube directory
+  file:
+    path: "{{ kube_config_dir }}"
+    state: directory
+    owner: ansible-user
+    group: ansible-user
+    mode: "0755"
+>>>>>>> 8268c6b (added files)

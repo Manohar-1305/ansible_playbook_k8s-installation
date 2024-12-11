@@ -1,0 +1,7 @@
+<<<<<<< HEAD
+chrony_package: chrony
+chrony_service: chronyd
+=======
+chrony_package: chrony
+chrony_service: chronyd
+>>>>>>> 8268c6b (added files)

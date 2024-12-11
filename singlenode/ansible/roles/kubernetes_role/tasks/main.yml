@@ -1,0 +1,94 @@
+- name: Set hostname
+  hostname:
+    name: "{{ ansible_hostname }}"
+
+- name: Disable Swap
+  shell: "sudo swapoff -a && sudo sed -i '/swap/d' /etc/fstab"
+
+- name: Ensure /etc/modules-load.d/containerd.conf exists
+  ansible.builtin.file:
+    path: /etc/modules-load.d/containerd.conf
+    state: touch
+
+- name: Load kernel modules
+  blockinfile:
+    path: /etc/modules-load.d/containerd.conf
+    block: |
+      overlay
+      br_netfilter
+
+- name: Load kernel modules
+  command: "{{ item }}"
+  loop:
+    - "sudo modprobe overlay"
+    - "sudo modprobe br_netfilter"
+
+- name: Ensure sysctl configuration file exists
+  ansible.builtin.file:
+    path: /etc/sysctl.d/99-kubernetes-cri.conf
+    state: touch
+
+- name: Configure sysctl for Kubernetes
+  blockinfile:
+    path: /etc/sysctl.d/99-kubernetes-cri.conf
+    block: |
+      net.bridge.bridge-nf-call-iptables = 1
+      net.ipv4.ip_forward = 1
+      net.bridge.bridge-nf-call-ip6tables = 1
+
+- name: Apply sysctl changes
+  command: "sudo sysctl --system"
+
+- name: Install and configure containerd
+  import_role:
+    name: containerd_role
+
+- name: Install dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "apt-transport-https"
+    - "ca-certificates"
+    - "curl"
+    - "gnupg"
+    - "gpg"
+
+- name: Ensure apt-transport-https is installed
+  apt:
+    name: apt-transport-https
+    state: present
+
+- name: Add Kubernetes APT key
+  ansible.builtin.shell: |
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  args:
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+- name: Add Kubernetes APT repository
+  ansible.builtin.shell: |
+    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+  args:
+    creates: /etc/apt/sources.list.d/kubernetes.list
+
+- name: Update APT package index
+  apt:
+    update_cache: yes
+
+- name: Install specific versions of kubelet, kubeadm, and kubectl
+  apt:
+    name:
+      - kubelet=1.28.7-1.1
+      - kubeadm=1.28.7-1.1
+      - kubectl=1.28.7-1.1
+    state: present
+
+- name: Mark kubelet, kubeadm, and kubectl to hold
+  ansible.builtin.shell: |
+    sudo apt-mark hold kubelet kubeadm kubectl
+
+- name: Enable and start kubelet service
+  systemd:
+    name: kubelet
+    enabled: yes
+    state: started

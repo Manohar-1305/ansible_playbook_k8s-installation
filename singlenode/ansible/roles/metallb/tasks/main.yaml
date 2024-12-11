@@ -1,0 +1,51 @@
+---
+- name: Ensure kubectl is installed
+  command: kubectl version --client
+  register: kubectl_check
+  failed_when: kubectl_check.rc != 0
+
+- name: Get kube-proxy ConfigMap and set strictARP to true
+  command: kubectl get configmap kube-proxy -n kube-system -o yaml
+  register: kube_proxy_config
+
+- name: Modify strictARP value to true
+  shell: |
+    echo "{{ kube_proxy_config.stdout }}" | sed -e "s/strictARP: false/strictARP: true/"
+  register: modified_kube_proxy_config
+
+- name: Apply the modified kube-proxy ConfigMap
+  shell: |
+    echo "{{ modified_kube_proxy_config.stdout }}" | kubectl apply -f - -n kube-system
+  register: apply_kube_proxy_config
+  failed_when: apply_kube_proxy_config.rc != 0
+
+- name: Deploy MetalLB
+  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-frr.yaml
+  register: deploy_metallb
+  failed_when: deploy_metallb.rc != 0
+
+- name: Create IPAddressPool YAML file from template
+  template:
+    src: ipaddresspool.yaml.j2
+    dest: /tmp/ipaddresspool.yaml
+
+- name: Apply IPAddressPool
+  command: kubectl apply -f /tmp/ipaddresspool.yaml
+  register: apply_ipaddresspool
+  failed_when: apply_ipaddresspool.rc != 0
+
+- name: Create L2Advertisement YAML file from template
+  template:
+    src: l2advertisement.yaml.j2
+    dest: /tmp/l2advertisement.yaml
+
+- name: Apply L2Advertisement
+  command: kubectl apply -f /tmp/l2advertisement.yaml
+  register: apply_l2advertisement
+  failed_when: apply_l2advertisement.rc != 0
+
+- name: Restart kube-proxy
+  include_role:
+    name: metallb
+    tasks_from: handlers/restart_kube_proxy.yaml
+  when: apply_kube_proxy_config.changed

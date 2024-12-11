@@ -1,0 +1,7 @@
+---
+# roles/kubernetes/handlers/main.yml
+
+- name: Restart containerd
+  service:
+    name: containerd
+    state: restarted

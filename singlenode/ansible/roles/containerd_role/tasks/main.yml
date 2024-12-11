@@ -1,0 +1,73 @@
+- name: Load necessary kernel modules if not already loaded
+  become: true
+  shell: |
+    lsmod | grep -q overlay || modprobe overlay
+    lsmod | grep -q br_netfilter || modprobe br_netfilter
+
+- name: Ensure kernel modules are loaded at boot
+  copy:
+    content: |
+      overlay
+      br_netfilter
+    dest: /etc/modules-load.d/containerd.conf
+
+- name: Set sysctl parameters for Kubernetes
+  copy:
+    content: |
+      net.bridge.bridge-nf-call-iptables = 1
+      net.ipv4.ip_forward = 1
+      net.bridge.bridge-nf-call-ip6tables = 1
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+
+- name: Apply sysctl parameters
+  command: sysctl --system
+  become: yes
+
+- name: Install containerd
+  apt:
+    name: containerd
+    state: present
+  become: yes
+
+- name: Ensure containerd config directory exists
+  file:
+    path: /etc/containerd
+    state: directory
+  become: yes
+
+- name: Get default containerd configuration
+  command: containerd config default
+  register: containerd_config_default
+  changed_when: false
+  become: yes
+
+- name: Prepare containerd/config.toml from default config
+  copy:
+    dest: /tmp/containerd_config.toml
+    content: "{{ containerd_config_default.stdout }}"
+  changed_when: false
+  become: yes
+
+- name: Set Cgroup driver to systemd
+  lineinfile:
+    insertafter: '.*\[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options\]$'
+    line: "          SystemdCgroup = true"
+    path: /tmp/containerd_config.toml
+  changed_when: false
+  become: yes
+
+- name: Remove SystemdCgroup = false if present
+  lineinfile:
+    path: /tmp/containerd_config.toml
+    state: absent
+    line: "            SystemdCgroup = false"
+  notify: restart containerd
+  become: yes
+
+- name: Copy config.toml to /etc/containerd
+  copy:
+    remote_src: true
+    src: /tmp/containerd_config.toml
+    dest: /etc/containerd/config.toml
+  notify: restart containerd
+  become: yes

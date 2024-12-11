@@ -1,0 +1,54 @@
+---
+- name: Fetch NFS Private IP and Update Defaults
+  hosts: nfs
+  gather_facts: no
+  vars:
+    region: "ap-south-1"
+    tag_name: "nfs"
+    nfs_defaults_file: "/home/ansible-user/singlenode/ansible/roles/nfs-setup/defaults/main.yaml"
+
+  tasks:
+    - name: Ensure the defaults directory exists
+      file:
+        path: /home/ansible-user/singlenode/ansible/roles/nfs-setup/defaults
+        state: directory
+        owner: ansible-user
+        group: ansible-user
+        mode: '0755'
+
+    - name: Fetch NFS instance private IP from AWS
+      command: >
+        aws ec2 describe-instances
+        --region {{ region }}
+        --filters "Name=tag:Name,Values={{ tag_name }}"
+        --query "Reservations[*].Instances[*].PrivateIpAddress"
+        --output text
+      register: nfs_ip_output
+
+    - name: Check if NFS IP was fetched
+      fail:
+        msg: "Failed to fetch NFS IP. Please check the instance tag and AWS configuration."
+      when: nfs_ip_output.stdout | length == 0
+
+    - name: Set NFS IP fact
+      set_fact:
+        nfs_ip: "{{ nfs_ip_output.stdout }}"
+
+    - name: Ensure defaults file exists
+      file:
+        path: "{{ nfs_defaults_file }}"
+        state: touch
+        owner: ansible-user
+        group: ansible-user
+        mode: '0644'
+
+    - name: Update NFS IP in defaults file
+      lineinfile:
+        path: "{{ nfs_defaults_file }}"
+        regexp: "^nfs_ip:"
+        line: "nfs_ip: {{ nfs_ip }}"
+        backrefs: yes
+
+    - name: Confirm updated NFS IP in defaults file
+      debug:
+        msg: "Updated NFS IP in {{ nfs_defaults_file }} to {{ nfs_ip }}"

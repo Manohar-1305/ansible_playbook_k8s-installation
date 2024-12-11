@@ -1,0 +1,14 @@
+<<<<<<< HEAD
+---
+- name: Enable and start kubelet
+  systemd:
+    name: kubelet
+    enabled: yes
+=======
+---
+- name: Enable and start kubelet
+  systemd:
+    name: kubelet
+    enabled: yes
+>>>>>>> 8268c6b (added files)
+    state: started

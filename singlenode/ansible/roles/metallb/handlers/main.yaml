@@ -1,0 +1,3 @@
+---
+- name: Restart kube-proxy
+  command: kubectl rollout restart daemonset/kube-proxy -n kube-system

@@ -1,0 +1,8 @@
+---
+- name: setup_kubectl
+  hosts: k8s_node
+  become: yes
+  tasks:
+    - name: initialize the master0
+      import_role:
+        name: init-master

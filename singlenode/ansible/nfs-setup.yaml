@@ -1,0 +1,36 @@
+---
+- name: Deploy NFS Subdir External Provisioner
+  hosts: node
+  become: yes
+  tasks:
+    - name: Create .kube directory
+      file:
+        path: /root/.kube
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+
+    - name: Copy kubeconfig to target node
+      copy:
+        src: /home/ansible-user/.kube/config
+        dest: /root/.kube/config
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Deploy NFS Subdir External Provisioner
+      import_role:
+        name: nfs-setup
+
+    - name: Patch NFS Storage Class
+      command: >
+        kubectl patch storageclass nfs-client
+        -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'
+      args:
+        chdir: /root  # Set the working directory to ensure kubectl finds kubeconfig
+
+    - name: Remove kubeconfig from target node
+      file:
+        path: /root/.kube/config
+        state: absent

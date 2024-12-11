@@ -1,0 +1,17 @@
+<<<<<<< HEAD
+---
+kubectl_url: "https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.0/2024-05-12/bin/linux/amd64/kubectl"
+kubectl_dest: "/usr/local/bin/kubectl"
+kubectl_bin_dest: "/home/ansible-user/bin/kubectl"
+kube_config_dir: "/home/ansible-user/.kube"
+kube_config_file: "{{ kube_config_dir }}/config"
+home_bin_dir: "/home/ansible-user/bin"
+=======
+---
+kubectl_url: "https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.0/2024-05-12/bin/linux/amd64/kubectl"
+kubectl_dest: "/usr/local/bin/kubectl"
+kubectl_bin_dest: "/home/ansible-user/bin/kubectl"
+kube_config_dir: "/home/ansible-user/.kube"
+kube_config_file: "{{ kube_config_dir }}/config"
+home_bin_dir: "/home/ansible-user/bin"
+>>>>>>> 8268c6b (added files)

@@ -1,0 +1,11 @@
+<<<<<<< HEAD
+---
+- include_tasks: install_kubectl.yml
+- include_tasks: fetch_admin_config.yml
+- include_tasks: permissions.yml
+=======
+---
+- include_tasks: install_kubectl.yml
+- include_tasks: fetch_admin_config.yml
+- include_tasks: permissions.yml
+>>>>>>> 8268c6b (added files)

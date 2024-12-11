@@ -1,0 +1,36 @@
+- name: Fetch admin.conf
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /tmp/admin.conf
+  delegate_to: localhost
+  become: true
+- name: Uninstall existing cert-manager if any
+  command:
+    cmd: helm uninstall cert-manager -n cert-manager
+  ignore_errors: true
+  environment:
+    KUBECONFIG: /tmp/admin.conf
+
+- name: Add Jetstack Helm repository
+  command:
+    cmd: helm repo add jetstack https://charts.jetstack.io --force-update
+  environment:
+    KUBECONFIG: /tmp/admin.conf
+
+- name: Install cert-manager using Helm
+  command:
+    cmd: helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.16.2 --set crds.enabled=true
+  environment:
+    KUBECONFIG: /tmp/admin.conf
+  async: 180  # Run the task asynchronously for 3 minutes (180 seconds)
+  poll: 0     # Do not wait for it to complete, just continue to the next task
+
+- name: Wait for cert-manager pods to be created
+  shell: kubectl get pods -n cert-manager -o jsonpath='{.items[*].status.phase}' | grep -E 'Pending|Running'
+  register: cert_manager_pods_status
+  retries: 5
+  delay: 60
+  until: cert_manager_pods_status.stdout != ""
+  environment:
+    KUBECONFIG: /tmp/admin.conf
+  failed_when: cert_manager_pods_status.stdout == ""

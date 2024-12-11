@@ -1,0 +1,19 @@
+<<<<<<< HEAD
+---
+- name: Prepare Nodes for Running Kubernetes
+  hosts: k8s_node
+  become: yes
+  tasks:
+    - name: Import Kubernetes Role
+      import_role:
+        name: kubernetes_role
+=======
+---
+- name: Prepare Nodes for Running Kubernetes
+  hosts: k8s_node
+  become: yes
+  tasks:
+    - name: Import Kubernetes Role
+      import_role:
+        name: kubernetes_role
+>>>>>>> 8268c6b (added files)
