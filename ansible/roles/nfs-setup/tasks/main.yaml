@@ -31,6 +31,7 @@
     creates: /tmp/helm_repo_added.txt
 
 - name: Install NFS Subdir External Provisioner using Helm
+  delegate_to: worker1
   shell: |
     helm install nfs-subdir-external-provisioner \
     nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
@@ -39,7 +40,7 @@
     --set storageClass.onDelete={{ storage_class_delete_behavior | lower }}
   args:
     chdir: /tmp
-  delegate_to: worker1
+
 
 - name: Check storage class status
   shell: kubectl get storageclass {{ storage_class_name }}
