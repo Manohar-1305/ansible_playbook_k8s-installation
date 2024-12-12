@@ -40,6 +40,7 @@
     --set storageClass.onDelete={{ storage_class_delete_behavior | lower }}
   args:
     chdir: /tmp
+  when: inventory_hostname == 'worker1'
 
 
 - name: Check storage class status
