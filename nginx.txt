@@ -2,8 +2,6 @@
 sudo apt update
 sudo apt install -y nginx
 sudo vi /etc/nginx/nginx.conf
-# add target groups
-sudo vi /etc/nginx/nginx.conf
 
 pid /run/nginx.pid;
 include /etc/nginx/modules-enabled/*.conf;
@@ -30,4 +28,6 @@ http {
         }
     }
 }
+sudo nginx -t
+sudo systemctl reload nginx
 
