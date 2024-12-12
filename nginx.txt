@@ -1,30 +1,7 @@
+
 sudo apt update
 sudo apt install -y nginx
 sudo vi /etc/nginx/nginx.conf
-
-
-http {
-    # existing settings ...
-
-    server {
-        listen 80; # Use 443 if setting up HTTPS
-        server_name 13.232.92.13; # Use your domain or public IP here
-
-        location / {
-            proxy_pass 10.100.131.2:31713; # Ensure this line ends with a semicolon
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
-}
-
-
-sudo nginx -t
-sudo systemctl restart nginx
-ansible-playbook -i inventories/inventory.ini k8s_installer.yaml --ssh-extra-args="-o StrictHostKeyChecking=no"
-
 # add target groups
 sudo vi /etc/nginx/nginx.conf
 
