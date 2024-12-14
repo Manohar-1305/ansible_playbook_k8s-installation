@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terraform VPC Creation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='vpc-creation.css') }}">
+  </head>
+  <body>
+    <div class="home-button-container"">
+      <a href="/" class="home-button">Home</a>
+  </div>
+    <div class="container">
+      <div class="content-wrapper">
+        <!-- Video Box -->
+        <div class="video-box">
+          <h2>Terraform Provider Video</h2>
+          <iframe
+            src="https://www.youtube.com/embed/TplZiRdYmkA"
+            src="https://www.youtube.com/embed/679ncIMG-y0"
+            title="Terraform VPC Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+
+          <!-- Button Container -->
+          <div class="button-container">
+            <div class="button">
+              <a href="{{ url_for('vpc_provider') }}" class="previous-button">Previous</a>
+              <div class="vpc-provider">VPC Provider</div>
+            </div>
+            <div class="button">
+              <a href="{{ url_for('vpc_creation') }}" class="next-button">Next</a>
+              <div class="vpc-creation">VPC Creation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Box -->
+        <div class="code-box">
+          <h2>Terraform Provider Code</h2>
+          <pre><code>
+
+            terraform {
+              required_version = "<=1.6.6"
+              required_providers {
+                aws = {
+                  source  = "hashicorp/aws"
+                  version = "~> 5.0"
+                }
+              }
+            }
+            provider "aws" {
+              region  = var.region
+              profile = "default"
+            }
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

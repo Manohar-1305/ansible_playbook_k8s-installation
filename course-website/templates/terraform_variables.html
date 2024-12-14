@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terraform Instance Creation</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vpc-creation.css') }}"
+    />
+  </head>
+  <body>
+    <div class="home-button-container">
+      <a href="/" class="home-button">Home</a>
+  </div>
+    <div class="container">
+      <div class="content-wrapper">
+        <!-- Video Box -->
+        <div class="video-box">
+          <h2>Terraform Variables Creation Video</h2>
+          <iframe
+            src="https://www.youtube.com/embed/cZzVPbn-ncI"
+            title="Terraform Private Subnet Creation Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+
+          <!-- Button Container -->
+          <div class="button-container">
+            <div class="button">
+              <a href="{{ url_for('instancecreation') }}" class="previous-button"
+                >Previous</a
+              >
+              <div class="vpc-provider">Instance Creation</div>
+            </div>
+            <div class="button">
+              <a href="{{ url_for('terraform_output') }}" class="next-button"
+                >Next</a
+              >
+              <div class="vpc-creation">Terraform Output</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Box -->
+        <div class="code-box">
+          <h2>Terraform Variable Creation Code</h2>
+          <pre><code>
+variable "instance_ami_type" {
+  description = "The Image ID to be used"
+  type        = string
+  default     = "ami-03bb6d83c60fc5f7c"
+}
+
+variable "region" {
+  description = "The regions used"
+  type        = string
+  default     = "ap-south-1"
+
+}
+
+variable "instance_type_bastion" {
+  description = "Instance type for the dev instance"
+  type        = string
+  default     = "t2.medium"
+}
+
+variable "instance_type_master" {
+  description = "Instance type for the test instance"
+  type        = string
+  default     = "t2.medium"
+}
+
+variable "instance_type_lb" {
+  description = "Instance type for the prod instance"
+  type        = string
+  default     = "t2.medium"
+}
+
+variable "instance_type_worker" {
+  description = "Instance type for the test instance"
+  type        = string
+  default     = "t2.medium"
+}
+variable "instance_type_nfs" {
+  description = "The instance type for the NFS server"
+  type        = string
+  default     = "t2.medium"
+}
+variable "master_instance_count" {
+  type        = number
+  default     = 3
+  description = "Number of master instances to create"
+}
+
+variable "worker_instance_count" {
+  type        = number
+  default     = 3
+  description = "Number of worker instances to create"
+}
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

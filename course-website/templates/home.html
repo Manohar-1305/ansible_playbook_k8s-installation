@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Learning Platform</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='home.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Welcome, {{ username }}!</h1>
+    <h3>Videos of Highly Available Kubernetes Cluster using Terraform and Ansible Videos</h3>
+    <p> These are the Videos in which Highly Avaiable Kubernetes Cluster is created using technologies such as Terraform & Ansible on AWS Cloud </p>
+
+    <!-- Container for video categories -->
+    <div class="video-container">
+      <div class="video-category" onclick="toggleVideos('terraform-videos')">
+        <h3>Terraform Videos</h3>
+      </div>
+      <div class="video-category" onclick="toggleVideos('ansible-videos')">
+        <h3>Ansible Videos</h3>
+      </div>
+      <div class="video-category" onclick="toggleVideos('blogs')">
+        <h3>Blogs</h3>
+      </div>
+    </div>
+
+    <!-- Terraform Video List -->
+    <div id="terraform-videos" class="video-list" >
+      <ul class="video-grid">
+        <li>
+          <img src="{{ url_for('static', filename='images/terraform.png') }}"alt="Video Icon" />
+          <a href="{{ url_for('vpc_provider') }}">Terraform Provider</a>
+        </li>
+        <!-- Add remaining Terraform video links here -->
+
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('vpc_creation') }}"
+          >Terraform VPC</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('public_subnet') }}"
+          >Terraform Public Subnet</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('public_route') }}"
+          >Terraform Public Route Creation</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('private_subnet') }}"
+          >Terraform Private Subnet</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('private_route') }}"
+          >Terraform Private Route Creation</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}"alt="Video Icon" /><a
+          href="{{ url_for('IAMCReation') }}"
+          >Terraform IAM Creation</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('natgateway') }}"
+          >Terraform Nat Gateway Creation </a
+        >
+      </li>
+
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('securitygroup') }}"
+          >Terraform Security Group Creation</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('instancecreation') }}"
+          >Terraform Instances Creation</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('terraform_variables') }}"
+          >Terraform Variables</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('terraform_output') }}"
+          >Terraform Output</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('terraform_user_data_bastion') }}"
+          >Terraform User Data Bastion</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('terraform_user_data_nfs') }}"
+          >Terraform User Data NFS</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('terraform_user_data_loadbalancer') }}"
+          >Terraform User Data Load Balancer</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('terraform_user_data_master') }}"
+          >Terraform User Data Master</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('adding_tags') }}"
+          >Terraform Adding Tags to Resources</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}"alt="Video Icon" /><a
+          href="{{ url_for('terraform_null_provisioner') }}"
+          >Terraform Null Provisioner</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('terraform_infra_creation') }}"
+          >Terraform Infra Creation</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('creating_inventory') }}"
+          >Creating Inventory</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('changes_in_inventory') }}"
+          >Changes in Inventory</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('git_code') }}"
+          >Git Code</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/terraform.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('elasticip_lb') }}"
+          >Update Elastic EIP Load Balancer</a
+        >
+      </li>
+
+      <li>
+        <img src="path/to/video-icon.png" alt="Video Icon" /><a
+          href="{{ url_for('terraform_enviroment_creation') }}"
+          >Terraform Environment Creation</a
+        >
+      </li>
+      <li>
+        <img src="path/to/video-icon.png" alt="Video Icon" /><a
+          href="{{ url_for('terraform_overall_summary') }}"
+          >Terraform Overall Summary</a
+        >
+      </li>
+    </ul>
+  </ul>
+    </div>
+    
+    <div id="ansible-videos" class="video-list">
+      <ul class="video-grid">
+      <!-- Ansible Video Links -->
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('ansible_inventory_code') }}"
+          >Ansible Inventory Code</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" />
+        <a href="{{ url_for('ansible_k8s_setup') }}">Ansible K8s Setup</a>
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('ansible_kubernetes_role') }}"
+          >Ansible Kubernetes Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('helm_role') }}"
+          >Helm Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('first_master_role') }}"
+          >First Master Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}"alt="Video Icon" /><a
+          href="{{ url_for('add_master_role') }}"
+          >Add Master Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}"alt="Video Icon" /><a
+          href="{{ url_for('add_workers_role') }}"
+          >Add Workers Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('time_sync_role') }}"
+          >Time Sync</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('kubectl_role') }}"
+          >Kubectl Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('cni_role') }}"
+          >CNI Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('add_masters_label') }}"
+          >Add Labels Masters Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('add_workers_label') }}"
+          >Add Labels Workers Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('nfs_setup') }}"
+          >NFS Server Setup Role</a
+        >
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('nfs_client_setup') }}"
+          >NFS Client Setup Role</a>
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('K8s_installer') }}"
+          >K8s Installer Role</a>
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='images/ansible.png') }}" alt="Video Icon" /><a
+          href="{{ url_for('cluster_setup') }}"
+          >Trail Cluster Setup Role</a>
+      </li>
+    </div>
+    <div id="blogs" style="display: none;">
+      <p>Here are some blogs...</p>
+    <li>
+        <img src="path/to/video-icon.png" alt="Video Icon" /><a
+          href="{{ url_for('provider_blog') }}"
+          >Terraform Provider</a
+        >
+      </li>
+      <li>
+        <img src="path/to/video-icon.png" alt="Video Icon" /><a
+          href="{{ url_for('vpc_creation_blog') }}"
+          >Terraform VPC creation</a
+        >
+      </li>
+      <li>
+        <img src="path/to/video-icon.png" alt="Video Icon" /><a
+          href="{{ url_for('terraform_public_subnet_blog') }}"
+          >Terraform Public Subnet</a
+        >
+      </li>
+    </div>
+    <!-- Logout Link -->
+    <form action="{{ url_for('logout') }}" method="GET">
+      <button type="submit" class="logout-btn">Logout</button>
+  </form>
+  
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Learning Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Online Learning Platform</h2>
+            <a href="{{ url_for('logout') }}"><button>Logout</button></a>
+        </div>
+        
+        <div class="sidebar">
+            <!-- Updated to ensure proper linking -->
+            <a href="{{ url_for('vpc_creation') }}"><button>Watch Videos</button></a>
+            <button>Blogs</button>
+        </div>
+        
+        <div class="footer">
+            <span>User logged in: {{ username }}</span>
+        </div>
+    </div>
+</body>
+</html>

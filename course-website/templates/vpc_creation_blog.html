@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terraform VPC Creation</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vpc_creation_blog.css') }}"
+    />
+  </head>
+  <body>
+    <div class="home-button-container">
+      <a href="/" class="home-button">Home</a>
+    </div>
+    <div class="container">
+      <div class="content-wrapper">
+        <!-- GitHub Code Link -->
+        <div class="code-link">
+          <p>
+            Code for VPC creation <a href="https://github.com/Manohar-1305/ansible_playbook_k8s-installation/blob/main/terraform/2.vpc.tf" target="_blank">here on GitHub</a>.
+          </p>
+        </div>
+
+        <h1>How to Create a VPC Using Terraform</h1>
+        <p>
+          Terraform is an Infrastructure as Code (IaC) tool that allows you to automate cloud resource management. One of the common tasks that Terraform helps with is setting up a Virtual Private Cloud (VPC) on AWS. This blog will guide you through creating a VPC and its associated Internet Gateway.
+        </p>
+
+        <h2>Understanding VPC and Its Importance</h2>
+        <p>
+          A Virtual Private Cloud (VPC) is a virtual network within your AWS account. It allows you to securely launch and manage resources like EC2 instances, databases, and more. With VPC, you can control your network environment by setting up subnets, route tables, and network gateways.
+        </p>
+        <p>
+          Creating a VPC using Terraform ensures consistency, repeatability, and version control in your infrastructure setup. By writing simple configuration files, you can deploy a fully functional VPC in a matter of minutes.
+        </p>
+
+        <!-- Video Box -->
+        <div class="video-box">
+          <h2>Terraform VPC Creation Tutorial Video</h2>
+          <iframe
+            src="https://www.youtube.com/embed/deybyJ-POIc"
+            title="Terraform VPC Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+
+        <h2>Creating a VPC with Terraform</h2>
+        <p>
+          To create a VPC in AWS using Terraform, you need to define two main resources:
+          <ul>
+            <li><strong>aws_vpc</strong>: This resource creates a virtual private cloud with a specified CIDR block.</li>
+            <li><strong>aws_internet_gateway</strong>: This resource attaches an Internet Gateway to your VPC, allowing access to the internet.</li>
+          </ul>
+        </p>
+
+        <h3>Example of Terraform Configuration for VPC Creation:</h3>
+        <p>
+          In your Terraform configuration, you would define a resource for the VPC, specifying the CIDR block you want to use. For example, you can use a CIDR block like `10.20.0.0/16` for your VPC.
+        </p>
+        <p>
+          Additionally, you would define an Internet Gateway (IGW) resource, linking it to your VPC to enable internet connectivity for instances within that VPC.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terraform Public Subnet Creation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='public_subnet.css') }}" />
+  </head>
+  <body>
+    <div class="home-button-container">
+      <a href="/" class="home-button">Home</a>
+    </div>
+    <div class="container">
+      <div class="content-wrapper">
+        <div class="code-link">
+ <p>
+            Code for VPC Provider <a href="https://github.com/Manohar-1305/ansible_playbook_k8s-installation/blob/main/terraform/3.public-subnet.tf" target="_blank">here on GitHub</a>.
+</p>
+        </div>
+        <h2>Terraform Public Subnet Creation Tutorial</h2>
+        
+        <p>In this tutorial, we will walk through the process of creating a public subnet using Terraform. This will help you set up your network infrastructure on AWS with a public subnet that can be accessed from the internet.</p>
+        
+        <p>Before we get started, make sure you have Terraform installed and your AWS credentials configured. If you're new to Terraform, it's recommended to review the basics of Terraform and AWS VPCs.</p>
+
+        <h3>Watch the Video Tutorial:</h3>
+        <iframe
+          src="https://www.youtube.com/embed/g34H1T_paHk"
+          title="Terraform VPC Video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+
+        <h3>Terraform Public Subnet Creation Code</h3>
+        <p>To begin, you will need to define your VPC (Virtual Private Cloud) and an Internet Gateway, which will allow your resources in the public subnet to communicate with the internet.</p>
+
+        <p>Here is the Terraform code to create a simple VPC and an Internet Gateway:</p>
+
+        <p><strong>1. Define the AWS VPC:</strong> This step creates a new VPC with a CIDR block of 10.20.0.0/16. You can modify this block to fit your requirements.</p>
+        
+        <p><strong>2. Create the Internet Gateway:</strong> This resource creates an internet gateway that allows resources in the VPC to connect to the internet.</p>
+
+        <p>Once you've added this code to your Terraform configuration, run <code>terraform apply</code> to apply the changes and create the VPC and Internet Gateway.</p>
+
+        <h3>Next Steps</h3>
+        <p>In the next part of the tutorial, we will show you how to create a public route for your public subnet so that the resources within the subnet can communicate with the internet.</p>
+      </div>
+    </div>
+  </body>
+</html>

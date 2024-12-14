@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terraform VPC Creation</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vpc-creation.css') }}"
+    />
+  </head>
+  <body>
+    <div class="home-button-container">
+      <a href="/" class="home-button">Home</a>
+    </div>
+    <div class="container">
+      <div class="content-wrapper">
+        <!-- Video Box -->
+        <div class="video-box">
+          <h2>Terraform Private Subnet Creation Video</h2>
+          <iframe
+            src="https://www.youtube.com/embed/0hcP1RayXkU"
+            title="Terraform Private Subnet Creation Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+
+          <!-- Button Container -->
+          <div class="button-container">
+            <div class="button">
+              <a href="{{ url_for('public_route') }}" class="previous-button"
+                >Previous</a
+              >
+              <div class="vpc-provider">Public Route Table Creation</div>
+            </div>
+            <div class="button">
+              <a href="{{ url_for('private_route') }}" class="next-button"
+                >Next</a
+              >
+              <div class="vpc-creation">Private Route Table Creation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Box -->
+        <div class="code-box">
+          <h2>Terraform Private Subnet Creation Code</h2>
+          <pre><code>
+    resource "aws_subnet" "dev_subnet_private_1" {
+      vpc_id                  = aws_vpc.dev_vpc.id
+      cidr_block              = "10.20.5.0/24"
+      availability_zone       = "ap-south-1a"
+      map_public_ip_on_launch = false
+    
+      tags = {
+        Name = "dev_subnet_private_1"
+      }
+    }
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

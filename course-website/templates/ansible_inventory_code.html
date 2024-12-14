@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ansible inventory update</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='vpc-provider.css') }}">
+    
+  </head>
+  <div style="position: absolute; top: 20px; right: 20px;">
+    
+  </div>
+  <body>
+    <div class="home-button-container">
+      <a href="/" class="home-button">Home</a>
+    </div>
+    <div class="container">
+      <div class="content-wrapper">
+        <!-- Video Box -->
+        <div class="video-box">
+          <h2>Ansible inventory update</h2>
+          <iframe
+          src="https://www.youtube.com/embed/IXZ1n8LkFf0"
+          title=" Ansible inventory update Video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+     
+        
+          <!-- Button Container -->
+          <div class="button-container">
+            <a href="{{ url_for('public_subnet') }}" class="previous-button">Previous</a>
+            <a href="{{ url_for('vpc_creation') }}" class="next-button">Next</a>
+        </div>
+
+        <!-- Code Box -->
+        <div class="code-box">
+          <h2>Ansible inventory update Video</h2>
+          <pre><code>
+            resource "aws_subnet" "dev_subnet_public_1" {
+              vpc_id                  = aws_vpc.dev_vpc.id
+              cidr_block              = "10.20.4.0/24"
+              availability_zone       = "ap-south-1a"
+              map_public_ip_on_launch = true
+            
+              tags = {
+                Name = "dev_subnet_public_1"
+              }
+            }
+</code></pre>
+        </div>
+      </div>
+      <!-- VPC Creation Sentence -->
+      <div class="vpc-creation">VPC Creation</div>
+      <div class="vpc-provider">VPC Provider</div>
+    </div>
+  </body>
+</html>

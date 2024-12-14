@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CNI Role Creation</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vpc-creation.css') }}"
+    />
+  </head>
+  <body>
+    <div class="home-button-container">
+      <a href="/" class="home-button">Home</a>
+  </div>
+    <div class="container">
+      <div class="content-wrapper">
+        <!-- Video Box -->
+        <div class="video-box">
+          <h2>CNI Role  Video</h2>
+          <iframe
+            src="https://www.youtube.com/embed/qTTEMqli3P8"
+            title="Terraform Private Subnet Creation Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+
+          <!-- Button Container -->
+          <div class="button-container">
+            <div class="button">
+              <a href="{{ url_for('kubectl_role') }}" class="previous-button"
+                >Previous</a
+              >
+              <div class="vpc-provider">Kubectl Role</div>
+            </div>
+            <div class="button">
+              <a href="{{ url_for('add_masters_label') }}" class="next-button"
+                >Next</a
+              >
+              <div class="vpc-creation">Add Master Labels</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Box -->
+        <div class="code-box">
+          <h2>CNI Role  Code</h2>
+          <pre><code>
+# Define arrays for master and worker nodes
+master=("master1" "master2" "master3")
+worker=("worker1" "worker2" "worker3")
+
+# Fetch and update IPs for masters
+declare -A master_ips
+for master_node in "${master[@]}"; do
+  log "Fetching IP for $master_node"
+  ip=$(aws ec2 describe-instances --region "$AWS_REGION" --filters "Name=tag:Name,Values=$master_node" --query "Reservations[*].Instances[*].PrivateIpAddress" --output text)
+  if [ -z "$ip" ]; then
+    log "Failed to fetch IP for $master_node"
+    exit 1
+  fi
+  log "$master_node IP: $ip"
+  master_ips["$master_node"]=$ip
+done
+
+# Pause for 2 minutes before updating workers
+sleep 120
+# Fetch and update IPs for workers
+declare -A worker_ips
+for worker_node in "${worker[@]}"; do
+  log "Fetching IP for $worker_node"
+  ip=$(aws ec2 describe-instances --region "$AWS_REGION" --filters "Name=tag:Name,Values=$worker_node" --query "Reservations[*].Instances[*].PrivateIpAddress" --output text)
+  if [ -z "$ip" ]; then
+    log "Failed to fetch IP for $worker_node"
+    exit 1
+  fi
+  log "$worker_node IP: $ip"
+  worker_ips["$worker_node"]=$ip
+done
+
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

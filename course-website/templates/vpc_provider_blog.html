@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terraform VPC Creation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='vpc_provider_blog.css') }}" />
+  </head>
+  <body>
+    <!-- Home Button at the Top -->
+    <div class="home-button-container">
+      <a href="/" class="home-button">Home</a>
+    </div>
+    <div class="container">
+      <div class="content-wrapper">
+        <!-- GitHub Code Link -->
+        <div class="code-link">
+          <p>
+            Code for VPC Provider <a href="https://github.com/Manohar-1305/ansible_playbook_k8s-installation/blob/main/terraform/1.terraform-provider.tf" target="_blank">here on GitHub</a>.
+          </p>
+        </div>
+    <div class="container">
+      <h1>How to Create a VPC Provider Using Terraform</h1>
+      <p>
+        Terraform is a powerful Infrastructure as Code (IaC) tool that helps automate cloud resource creation. One common task is setting up a Virtual Private Cloud (VPC) on AWS to host and secure your applications. In this guide, we'll go through creating a VPC with an associated Internet Gateway using Terraform.
+      </p>
+
+      <h2>What is a VPC?</h2>
+      <p>
+        A Virtual Private Cloud (VPC) is a virtual network dedicated to your AWS account. It enables you to launch AWS resources, such as EC2 instances, in a logically isolated environment. You can configure your VPC by setting up subnets, route tables, and gateways to control traffic.
+      </p>
+
+      <h2>Terraform Configuration</h2>
+      <p>
+        Below is a Terraform script to create a basic VPC and an Internet Gateway. The VPC is identified by its CIDR block, and the Internet Gateway allows instances within the VPC to connect to the internet.
+      </p>
+
+      <h2>Explanation</h2>
+      <ul>
+        <li>
+          <strong>aws_vpc:</strong> This resource block creates a new VPC with the CIDR block `10.20.0.0/16`. The <code>tags</code> section assigns a name to the VPC.
+        </li>
+        <li>
+          <strong>aws_internet_gateway:</strong> This creates an Internet Gateway and attaches it to the VPC. The gateway enables resources in the VPC to access the internet.
+        </li>
+      </ul>
+
+      <h2>Learn More</h2>
+      <p>
+        For a step-by-step guide, watch the video below:
+      </p>
+      <div class="video-box">
+        <h2>Terraform Provider Video</h2>
+        <iframe
+          src="https://www.youtube.com/embed/TplZiRdYmkA"
+          title="Terraform VPC Video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          style="width: 100%; height: 315px; border: none;"
+        ></iframe>
+      </div>
+    </div>
+  </body>
+</html>
