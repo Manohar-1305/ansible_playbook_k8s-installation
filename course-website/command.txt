@@ -1,2 +1,8 @@
-docker build -t flask-app .
-docker run -p 5000:5000 flask-app
+apt  install docker.io -y
+docker docker build -t course-website .
+docker run -d -p 5000:5000 manoharshetty507/course-website:v1
+
+push to dockerhub
+docker tag flask-app manoharshetty507/course-website:v1
+docker login
+docker push manoharshetty507/flask-app:v1
