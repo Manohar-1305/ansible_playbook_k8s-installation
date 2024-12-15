@@ -26,8 +26,7 @@ metadata:
   name: nginx-service
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
-  labels:
+    service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-xxxxxxxx,subnet-yyyyyyyy" 
     app: nginx
 spec:
   type: LoadBalancer
