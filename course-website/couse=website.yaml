@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-webpage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: course-webpage
+  template:
+    metadata:
+      labels:
+        app: course-webpage
+    spec:
+      containers:
+        - name: course-webpage
+          image: manoharshetty507/course-website:v1
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app-service
+spec:
+  selector:
+    app: course-webpage
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30001 
+  type: NodePort
