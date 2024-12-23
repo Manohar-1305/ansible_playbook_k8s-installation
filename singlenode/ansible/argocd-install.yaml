@@ -1,6 +1,6 @@
 ---
 - name: install argocd
-  hosts: local
+  hosts: node
   become: yes
   tasks:
     - name: Install argocd
