@@ -230,3 +230,4 @@ fi
 USER_FILE="$(pwd)/nfs_ip_update.log"
 
 echo "NFS IP updated to $NFS_IP" >>nfs_path_updated
+
