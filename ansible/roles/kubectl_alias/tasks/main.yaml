@@ -1,4 +1,3 @@
----
 - name: Copy kubectl aliases to the nodes
   copy:
     src: kubectl_aliases.sh
@@ -14,7 +13,9 @@
     state: present
 
 - name: Source kubectl aliases for current session
-  shell: source /tmp/kubectl_aliases.sh
+  shell: |
+    echo "source /tmp/kubectl_aliases.sh" >> ~/.bashrc
+    source ~/.bashrc
   args:
     executable: /bin/bash
   become: yes
