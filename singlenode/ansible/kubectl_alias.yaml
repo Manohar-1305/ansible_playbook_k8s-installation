@@ -1,0 +1,6 @@
+---
+- name: Configure kubectl aliases on Kubernetes nodes
+  hosts: k8s_node
+  become: yes
+  roles:
+    - kubectl_alias
