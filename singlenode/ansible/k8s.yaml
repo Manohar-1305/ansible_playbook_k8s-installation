@@ -13,3 +13,4 @@
 - import_playbook: nfs.yaml hostlist=nfs
 - import_playbook: nfs-setup.yaml hostlist=master,node
 - import_playbook: k8s_cert_manager.yaml hostlist=master
+- import_playbook: kubectl_playbook.yaml hostlist=k8s_node
