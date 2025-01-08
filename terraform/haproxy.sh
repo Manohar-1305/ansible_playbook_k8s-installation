@@ -1,5 +1,5 @@
 frontend fe-apiserver
-   bind 0.0.0.0:6443
+   bind 0.0.0.0:6444
    mode tcp
    option tcplog
    timeout client 30s  # Adjust as needed
