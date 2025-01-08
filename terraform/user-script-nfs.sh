@@ -26,6 +26,7 @@ sleep 2
 mkdir -p $user_ssh_dir
 chmod 700 $user_ssh_dir
 
+
 # Install AWS CLI
 apt-get update -y
 apt-get install -y awscli
