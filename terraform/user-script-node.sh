@@ -37,3 +37,4 @@ chown -R $user_name:$user_name $user_home
 
 # Add user to sudoer group
 echo "ansible-user ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible-user
+
