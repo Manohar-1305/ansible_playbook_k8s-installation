@@ -1,8 +1,0 @@
----
-- name: setup_kubectl
-  hosts: local
-  become: yes
-  tasks:
-    - name: Setup kubectl on bastion
-      import_role:
-        name: kubectl-local

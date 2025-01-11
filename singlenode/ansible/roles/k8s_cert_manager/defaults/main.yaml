@@ -1,5 +1,0 @@
----
-issuer_name: letsencrypt-prod
-namespace: cert-manager
-email: support@drunkcoding.net
-ingress_class: nginx

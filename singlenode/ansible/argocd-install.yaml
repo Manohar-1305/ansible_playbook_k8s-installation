@@ -1,8 +1,0 @@
----
-- name: install argocd
-  hosts: node
-  become: yes
-  tasks:
-    - name: Install argocd
-      import_role:
-        name: argocd-install

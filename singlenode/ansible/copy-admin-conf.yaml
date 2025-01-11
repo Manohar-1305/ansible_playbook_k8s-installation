@@ -1,8 +1,0 @@
----
-- name: setup_kubectl
-  hosts: local
-  become: yes
-  tasks:
-    - name: copy admin.conf
-      import_role:
-        name: copy-admin-conf
