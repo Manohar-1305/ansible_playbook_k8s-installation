@@ -1,6 +1,7 @@
 
 ---
 - import_playbook: k8s-setup.yaml hostlist=k8s_node
+- import_playbook: set_hostnames.yml hostlist=controlplane
 - import_playbook: time-sync.yaml hostlist=k8s_node
 - import_playbook: helm-install.yaml hostlist=k8s_node
 - import_playbook: kubernetes_role.yaml hostlist=k8s_node
