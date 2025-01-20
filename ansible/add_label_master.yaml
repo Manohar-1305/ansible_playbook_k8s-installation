@@ -4,13 +4,22 @@
   gather_facts: false
 
   tasks:
+    - name: Get the list of all Kubernetes nodes
+      shell: kubectl get nodes | awk '{print $1}'
+      register: node_list
+
+    - name: Remove header from node list
+      set_fact:
+        nodes: "{{ node_list.stdout_lines[1:] }}"
+
     - name: Label each node with the master role
-      command: kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/master=true --overwrite
+      loop: "{{ nodes }}"
+      command: kubectl label node {{ item }} node-role.kubernetes.io/master=true --overwrite
 
     - name: Display verification output
       shell: kubectl get nodes --show-labels
       register: verify_output
-      changed_when: false
+      changed_when: false  # Prevent marking this task as changed
 
     - name: Show labeled nodes
       debug:
