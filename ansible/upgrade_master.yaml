@@ -1,0 +1,108 @@
+---
+- name: Upgrade Kubernetes Control Plane
+  hosts: controlplane
+  serial: 1
+  become: yes
+  vars:
+    kubeadm_version: "1.29.12-1.1"
+    kube_version: "1.29.12"
+
+  tasks:
+    - name: Display current kubeadm version
+      shell: kubeadm version -o json
+      register: kubeadm_version_output
+
+    - debug:
+        var: kubeadm_version_output.stdout
+
+    - name: Unhold kubeadm
+      shell: sudo apt-mark unhold kubeadm
+
+    - name: Update version in Kubernetes sources list
+      lineinfile:
+        path: /etc/apt/sources.list.d/kubernetes.list
+        regexp: '^(deb \[signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg\] https://pkgs.k8s.io/core:/stable:/)v1.28(/deb/ /)$'
+        line: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /'
+        backrefs: yes
+
+    - name: Show kubeadm versions available
+      shell: sudo apt-cache madison kubeadm | tac
+      register: kubeadm_versions
+
+    - debug:
+        var: kubeadm_versions.stdout
+
+    - name: Update package lists
+      apt:
+        update_cache: yes
+
+    - name: Install specific kubeadm version
+      apt:
+        name: "kubeadm={{ kubeadm_version }}"
+        state: present
+
+    - name: Hold kubeadm
+      shell: sudo apt-mark hold kubeadm
+
+    - name: Display kubeadm upgrade plan
+      shell: sudo kubeadm upgrade plan
+      register: upgrade_plan
+
+    - debug:
+        var: upgrade_plan.stdout
+
+    - name: Apply kubeadm upgrade
+      shell: sudo kubeadm upgrade apply v{{ kube_version }} -y
+
+    - name: Get the correct node name for kubectl drain
+      shell: kubectl get nodes -o custom-columns=":metadata.name" | grep {{ inventory_hostname }}
+      register: node_name
+      failed_when: node_name.stdout == ""
+
+    - name: Drain the control plane node
+      shell: kubectl drain {{ node_name.stdout }} --ignore-daemonsets --delete-emptydir-data
+      register: drain_output
+      failed_when: "'error' in drain_output.stderr"
+
+
+    - name: Unhold kubelet and kubectl
+      shell: sudo apt-mark unhold kubelet kubectl
+
+    - name: Update package lists for kubelet and kubectl
+      apt:
+        update_cache: yes
+
+    - name: Install specific kubelet and kubectl versions
+      apt:
+        name:
+          - "kubelet={{ kubeadm_version }}"
+          - "kubectl={{ kubeadm_version }}"
+        state: present
+
+    - name: Hold kubelet and kubectl
+      shell: sudo apt-mark hold kubelet kubectl
+
+    - name: Restart kubelet service
+      systemd:
+        name: kubelet
+        state: restarted
+        enabled: yes
+
+    - name: Get the correct node name for kubectl uncordon
+      shell: kubectl get nodes -o custom-columns=":metadata.name" | grep {{ inventory_hostname | regex_replace('^10\\.', 'ip-10.') }}
+      register: node_name
+      failed_when: node_name.stdout == ""
+
+    - name: Uncordon the control plane node
+      shell: kubectl uncordon {{ node_name.stdout }}
+      register: uncordon_output
+      failed_when: "'error' in uncordon_output.stderr"
+
+
+    - name: Get the status of all nodes
+      shell: kubectl get nodes
+      register: node_status
+
+    - debug:
+        var: node_status.stdout
+
