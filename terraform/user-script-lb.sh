@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo su -
-sleep 60
+sleep 120
 # User creation
 
 user_name="ansible-user"
