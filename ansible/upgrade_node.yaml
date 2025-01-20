@@ -1,1 +1,44 @@
 
+---
+- name: Upgrade Worker Nodes
+  hosts: node
+  become: yes
+  tasks:
+    - name: Drain the node to prepare for upgrade
+      command: kubectl drain {{ inventory_hostname }} --ignore-daemonsets --delete-local-data
+      register: drain_result
+      ignore_errors: yes
+    - name: Upgrade kubelet and kubectl packages
+      apt:
+        name:
+          - kubelet
+          - kubectl
+        state: latest
+        update_cache: yes
+      when: drain_result.rc == 0
+
+    - name: Upgrade containerd
+      apt:
+        name: containerd
+        state: latest
+        update_cache: yes
+      when: drain_result.rc == 0
+
+    - name: Restart kubelet service
+      service:
+        name: kubelet
+        state: restarted
+      when: drain_result.rc == 0
+
+    - name: Uncordon the node to bring it back online
+      command: kubectl uncordon {{ inventory_hostname }}
+      when: drain_result.rc == 0
+
+    - name: Verify the node upgrade
+      command: kubectl get nodes
+      register: node_status
+      changed_when: false
+
+    - name: Display node status
+      debug:
+        var: node_status.stdout_lines
