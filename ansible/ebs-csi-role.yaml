@@ -1,6 +1,6 @@
 ---
 - name: Install AWS EBS CSI Driver on Kubernetes
-  hosts: master
+  hosts: master1
   become: yes
   roles:
     - ebs-csi-driver
