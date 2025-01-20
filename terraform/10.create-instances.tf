@@ -1,5 +1,5 @@
 
-resource "aws_instance" "bastion" {
+resource "aws_instance" "Bastion" {
   ami                  = var.instance_ami_type
   instance_type        = var.instance_type_bastion
   key_name             = "testing-dev-1"
@@ -22,7 +22,7 @@ resource "null_resource" "pause_before_nfs" {
   provisioner "local-exec" {
     command = "sleep 90"
   }
-  depends_on = [aws_instance.bastion]
+  depends_on = [aws_instance.Bastion]
 }
 
 
@@ -30,7 +30,7 @@ resource "aws_instance" "nfs_server" {
   ami                  = var.instance_ami_type
   instance_type        = var.instance_type_nfs
   key_name             = "testing-dev-1"
-  subnet_id            = aws_subnet.dev_subnet_public_1.id
+  subnet_id            = aws_subnet.dev_subnet_private_1.id
   iam_instance_profile = data.aws_iam_instance_profile.s3-access-profile.name
   vpc_security_group_ids = [
     aws_security_group.combined_sg.id,
@@ -42,7 +42,9 @@ resource "aws_instance" "nfs_server" {
     "Enviroment"                       = "Development"
     "kubernetes.io/cluster/kubernetes" = "owned"
   }
+  
   depends_on = [null_resource.pause_before_nfs]
+  
 }
 
 resource "aws_instance" "master" {
@@ -67,7 +69,7 @@ resource "null_resource" "pause_before_master_nodes" {
   provisioner "local-exec" {
     command = "sleep 120"
   }
-  depends_on = [aws_instance.bastion, aws_instance.master]
+  depends_on = [aws_instance.nfs_server]
 }
 
 resource "aws_instance" "master-server" {
