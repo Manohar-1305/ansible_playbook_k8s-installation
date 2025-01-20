@@ -1,0 +1,117 @@
+---
+
+- name: Debug - Check if kubeconfig file exists
+  stat:
+    path: /home/ansible-user/.kube/config
+  register: kubeconfig_check
+
+- name: Debug - Print result of kubeconfig check
+  debug:
+    var: kubeconfig_check
+
+- name: Add AWS EBS CSI Driver Helm repository
+  command: >
+    helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+  register: helm_repo_add
+  failed_when: helm_repo_add.rc != 0
+  changed_when: "'added' in helm_repo_add.stdout or 'updated' in helm_repo_add.stdout"
+  ignore_errors: false
+
+
+- name: Update Helm repositories
+  command: helm repo update
+  register: helm_repo_update
+  changed_when: "'Update Complete' in helm_repo_update.stdout"
+
+- name: Install or upgrade AWS EBS CSI Driver
+  command: >
+    helm upgrade --install aws-ebs-csi-driver
+    --namespace kube-system
+    aws-ebs-csi-driver/aws-ebs-csi-driver
+  register: helm_install
+  failed_when: helm_install.rc != 0
+  changed_when: "'deployed' in helm_install.stdout or 'updated' in helm_install.stdout"
+
+- name: Check for AWS EBS CSI Driver pods
+  shell: kubectl get pods -n kube-system -l app.kubernetes.io/name=aws-ebs-csi-driver
+  register: pod_status
+  changed_when: false
+
+- name: Display the status of AWS EBS CSI Driver pods
+  debug:
+    msg: "{{ pod_status.stdout }}"
+
+
+- name: Check if StorageClass gp2 exists
+  command: "kubectl get storageclass gp2"
+  register: storageclass_check
+  environment:
+    KUBECONFIG: "/home/ansible-user/.kube/config"
+  failed_when: storageclass_check.rc not in [0, 1]
+  changed_when: False
+
+- name: Check if storageclass.yaml exists on the remote server
+  stat:
+    path: /tmp/storageclass.yaml
+  register: storageclass_file_check
+
+- name: Remove existing /tmp/storageclass.yaml if it exists
+  file:
+    path: /tmp/storageclass.yaml
+    state: absent
+  ignore_errors: yes
+
+- name: Copy StorageClass template to remote if it does not exist
+  template:
+    src: "/home/ansible-user/singlenode/ansible/roles/ebs-csi-driver/templates/storageclass.yaml.j2"
+    dest: /tmp/storageclass.yaml
+  when: storageclass_file_check.stat.exists == False
+  environment:
+    KUBECONFIG: /home/ansible-user/.kube/config
+- name: Ensure kubeconfig directory exists on target
+  file:
+    path: /home/ansible-user/.kube
+    state: directory
+    mode: '0755'
+
+- name: Copy kubeconfig file to target
+  copy:
+    src: /home/ansible-user/.kube/config
+    dest: /home/ansible-user/.kube/config
+    mode: '0600'
+
+- name: Apply StorageClass if it does not exist
+  command:
+    cmd: kubectl apply -f /tmp/storageclass.yaml --kubeconfig /home/ansible-user/.kube/config
+  when: storageclass_file_check.stat.exists == False
+  environment:
+    KUBECONFIG: /home/ansible-user/.kube/config
+
+# Check if PersistentVolumeClaim ebs-pvc exists
+- name: Check if PersistentVolumeClaim exists
+  command: kubectl get pvc ebs-pvc --kubeconfig /home/ansible-user/.kube/config
+  register: pvc_check
+  failed_when: false  # Ignore failures, we just want to check existence
+  changed_when: false
+
+- name: Debug output of pvc_check
+  debug:
+    var: pvc_check
+
+- name: Render PersistentVolumeClaim template
+  template:
+    src: persistentvolumeclaim.yaml.j2  # Template file in 'templates' folder
+    dest: /tmp/persistentvolumeclaim.yaml
+    mode: '0644'
+
+- name: Create PersistentVolumeClaim if it does not exist
+  command: kubectl apply -f /tmp/persistentvolumeclaim.yaml --kubeconfig /home/ansible-user/.kube/config
+  when: pvc_check.rc != 0  # Only create if PVC does not exist
+  environment:
+    KUBECONFIG: /home/ansible-user/.kube/config
+  register: pvc_creation
+  changed_when: true  # Mark as changed if PVC is created
+
+- name: Debug output of pvc_creation
+  debug:
+    var: pvc_creation
