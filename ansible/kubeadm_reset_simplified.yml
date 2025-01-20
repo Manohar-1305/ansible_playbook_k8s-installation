@@ -1,0 +1,26 @@
+---
+- name: Reset Kubernetes nodes using kubeadm
+  hosts: controlplane,nodes # Target all nodes
+  become: yes  # Ensure we have the necessary privileges
+  gather_facts: false  # No need to gather facts
+
+  tasks:
+    - name: Get the list of all Kubernetes nodes
+      command: kubectl get nodes -o custom-columns=":metadata.name"
+      register: node_list
+
+    - name: Find node matching inventory hostname
+      set_fact:
+        node_name: "{{ node_list.stdout_lines | select('match', inventory_hostname | regex_replace('^10\\.', 'ip-10.')) | first }}"
+
+    - name: Run kubeadm reset -f on the matching node
+      command: kubeadm reset -f
+      when: node_name is defined and node_name == inventory_hostname
+      ignore_errors: yes
+
+    - name: Reboot the node after reset
+      reboot:
+        msg: "Rebooting node after kubeadm reset"
+        reboot_timeout: 600
+        test_command: uptime
+      when: node_name is defined and node_name == inventory_hostname
