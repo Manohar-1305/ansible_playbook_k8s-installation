@@ -1,0 +1,51 @@
+---
+- name: Copy Kubernetes pki files from master1 to other masters
+  hosts: master2,master3
+  become: yes
+  tasks:
+    - name: Fetch pki files from master1 to the controller
+      fetch:
+        src: "/etc/kubernetes/pki/{{ item }}"
+        dest: "/tmp/pki/{{ item }}"
+        flat: yes
+        validate_checksum: no
+      delegate_to: master1
+      with_items:
+        - apiserver-etcd-client.crt
+        - apiserver-etcd-client.key
+        - apiserver-kubelet-client.crt
+        - apiserver-kubelet-client.key
+        - apiserver.crt
+        - apiserver.key
+        - ca.crt
+        - ca.key
+        - front-proxy-ca.crt
+        - front-proxy-ca.key
+        - front-proxy-client.crt
+        - front-proxy-client.key
+        - sa.key
+        - sa.pub
+
+    - name: Copy fetched pki files to remote masters
+      copy:
+        src: "/tmp/pki/{{ item }}"
+        dest: "/etc/kubernetes/pki/{{ item }}"
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: no
+      with_items:
+        - apiserver-etcd-client.crt
+        - apiserver-etcd-client.key
+        - apiserver-kubelet-client.crt
+        - apiserver-kubelet-client.key
+        - apiserver.crt
+        - apiserver.key
+        - ca.crt
+        - ca.key
+        - front-proxy-ca.crt
+        - front-proxy-ca.key
+        - front-proxy-client.crt
+        - front-proxy-client.key
+        - sa.key
+        - sa.pub
