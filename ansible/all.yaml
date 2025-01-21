@@ -1,0 +1,165 @@
+---
+- name: Copy kubeconfig file to remote servers
+  hosts: master2,master3
+  become: yes
+  tasks:
+    - name: Copy kubeconfig file to /etc/kubernetes/admin.conf
+      copy:
+        src: /home/ansible-user/.kube/config
+        dest: /etc/kubernetes/admin.conf
+        owner: root
+        group: root
+        mode: '0600'
+
+- name: Copy Kubernetes manifest files and admin.conf from master1 to other masters
+  hosts: master2,master3
+  become: yes
+  tasks:
+    - name: Fetch manifest files from master1 to the controller
+      fetch:
+        src: "/etc/kubernetes/manifests/{{ item }}"
+        dest: "/tmp/manifests/{{ item }}"
+        flat: yes
+        validate_checksum: no
+      delegate_to: master1
+      with_items:
+        - etcd.yaml
+        - kube-apiserver.yaml
+        - kube-controller-manager.yaml
+        - kube-scheduler.yaml
+
+    - name: Copy fetched manifest files to remote masters
+      copy:
+        src: "/tmp/manifests/{{ item }}"
+        dest: "/etc/kubernetes/manifests/{{ item }}"
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: no
+      with_items:
+        - etcd.yaml
+        - kube-apiserver.yaml
+        - kube-controller-manager.yaml
+        - kube-scheduler.yaml
+
+    - name: Fetch admin.conf from master1 to the controller
+      fetch:
+        src: "/etc/kubernetes/admin.conf"
+        dest: "/tmp/admin.conf"
+        flat: yes
+        validate_checksum: no
+      delegate_to: master1
+
+    - name: Copy admin.conf to the remote masters
+      copy:
+        src: "/tmp/admin.conf"
+        dest: "/etc/kubernetes/admin.conf"
+        owner: root
+        group: root
+        mode: '0600'
+        remote_src: no
+
+    - name: Set KUBECONFIG environment variable
+      lineinfile:
+        path: /etc/profile
+        line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
+        create: yes
+      become: yes
+
+    - name: Apply the manifest files on remote masters
+      shell: |
+        export KUBECONFIG=/etc/kubernetes/admin.conf
+        export KUBEVERSION=$(kubectl version --short | grep "Server Version" | awk '{print $3}')
+        kubectl apply -f /etc/kubernetes/manifests/{{ item }}
+      with_items:
+        - etcd.yaml
+        - kube-apiserver.yaml
+        - kube-controller-manager.yaml
+        - kube-scheduler.yaml
+
+- name: Copy Kubernetes pki and etcd files from master1 to other masters
+  hosts: master2,master3
+  become: yes
+  tasks:
+    - name: Fetch pki files from master1 to the controller
+      fetch:
+        src: "/etc/kubernetes/pki/{{ item }}"
+        dest: "/tmp/pki/{{ item }}"
+        flat: yes
+        validate_checksum: no
+      delegate_to: master1
+      with_items:
+        - apiserver-etcd-client.crt
+        - apiserver-etcd-client.key
+        - apiserver-kubelet-client.crt
+        - apiserver-kubelet-client.key
+        - apiserver.crt
+        - apiserver.key
+        - ca.crt
+        - ca.key
+        - front-proxy-ca.crt
+        - front-proxy-ca.key
+        - front-proxy-client.crt
+        - front-proxy-client.key
+        - sa.key
+        - sa.pub
+
+    - name: Fetch etcd files from master1 to the controller
+      fetch:
+        src: "/etc/kubernetes/pki/etcd/{{ item }}"
+        dest: "/tmp/etcd/{{ item }}"
+        flat: yes
+        validate_checksum: no
+      delegate_to: master1
+      with_items:
+        - ca.crt
+        - ca.key
+        - healthcheck-client.crt
+        - healthcheck-client.key
+        - peer.crt
+        - peer.key
+        - server.crt
+        - server.key
+
+    - name: Copy fetched pki files to remote masters
+      copy:
+        src: "/tmp/pki/{{ item }}"
+        dest: "/etc/kubernetes/pki/{{ item }}"
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: no
+      with_items:
+        - apiserver-etcd-client.crt
+        - apiserver-etcd-client.key
+        - apiserver-kubelet-client.crt
+        - apiserver-kubelet-client.key
+        - apiserver.crt
+        - apiserver.key
+        - ca.crt
+        - ca.key
+        - front-proxy-ca.crt
+        - front-proxy-ca.key
+        - front-proxy-client.crt
+        - front-proxy-client.key
+        - sa.key
+        - sa.pub
+
+    - name: Copy fetched etcd files to remote masters
+      copy:
+        src: "/tmp/etcd/{{ item }}"
+        dest: "/etc/kubernetes/pki/etcd/{{ item }}"
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: no
+      with_items:
+        - ca.crt
+        - ca.key
+        - healthcheck-client.crt
+        - healthcheck-client.key
+        - peer.crt
+        - peer.key
+        - server.crt
+        - server.key
+
