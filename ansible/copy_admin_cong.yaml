@@ -1,0 +1,13 @@
+---
+- name: Copy kubeconfig file to remote servers
+  hosts: master1,master2
+  become: yes
+  tasks:
+    - name: Copy kubeconfig file to /etc/kubernetes/admin.conf
+      copy:
+        src: /home/ansible-user/.kube/config
+        dest: /etc/kubernetes/admin.conf
+        owner: root
+        group: root
+        mode: '0600'
+
