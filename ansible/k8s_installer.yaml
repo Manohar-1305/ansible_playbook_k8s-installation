@@ -17,6 +17,8 @@
 - import_playbook: kubectl_alias.yaml hostlist=k8s_node
 - import_playbook: label_controlplane.yaml hostlist=master1
 - import_playbook: aws_cloud_controller.yaml hostlist=local
+- import_playbook: all.yaml hostlist=controlplane
+
 #- import_playbook: upgrade_master.yaml hostlist=controlplane
 #- import_playbook: upgrade_node.yaml hostlist=node
 
