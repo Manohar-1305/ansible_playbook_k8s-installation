@@ -1,6 +1,6 @@
 ---
 - name: Copy kubeconfig file to remote servers
-  hosts: master1,master2
+  hosts: master2,master3
   become: yes
   tasks:
     - name: Copy kubeconfig file to /etc/kubernetes/admin.conf
