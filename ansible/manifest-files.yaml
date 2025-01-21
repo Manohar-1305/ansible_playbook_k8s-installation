@@ -1,0 +1,31 @@
+---
+- name: Copy Kubernetes manifest files from master1 to other masters
+  hosts: master2,master3
+  become: yes
+  tasks:
+    - name: Fetch manifest files from master1 to the controller
+      fetch:
+        src: "/etc/kubernetes/manifests/{{ item }}"
+        dest: "/tmp/manifests/{{ item }}"
+        flat: yes
+        validate_checksum: no
+      delegate_to: master1
+      with_items:
+        - etcd.yaml
+        - kube-apiserver.yaml
+        - kube-controller-manager.yaml
+        - kube-scheduler.yaml
+
+    - name: Copy fetched manifest files to remote masters
+      copy:
+        src: "/tmp/manifests/{{ item }}"
+        dest: "/etc/kubernetes/manifests/{{ item }}"
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: no
+      with_items:
+        - etcd.yaml
+        - kube-apiserver.yaml
+        - kube-controller-manager.yaml
+        - kube-scheduler.yaml
