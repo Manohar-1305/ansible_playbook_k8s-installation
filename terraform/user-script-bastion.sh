@@ -102,7 +102,7 @@ if [ ! -f "$INVENTORY_FILE" ]; then
 fi
 
 # Fetch NFS IP and update the inventory file
-NFS_IP=$(aws ec2 describe-instances --region "$AWS_REGION" --filters "Name=tag:Name,Values=nfs" --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
+NFS_IP=$(aws ec2 describe-instances --region "$AWS_REGION" --filters "Name=tag:Name,Values=nfs" --query "Reservations[*].Instances[*].PrivateIpAddress" --output text)
 
 if [ -z "$NFS_IP" ]; then
   log "Failed to fetch NFS IP"
@@ -119,7 +119,7 @@ if [ -z "$BASTION_IP" ]; then
   exit 1
 fi
 log "Bastion IP: $BASTION_IP"
-sleep 30
+sleep 90
 # Define arrays for master and worker nodes
 master=("master1" "master2" "master3")
 worker=("worker1" "worker2" "worker3")
