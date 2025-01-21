@@ -13,9 +13,9 @@ resource "aws_eip" "bastion_eip" {
     Name = "bastion_eip"
   }
 }
-resource "aws_eip_association" "bastion_eip_assoc" {
-  instance_id   = aws_instance.bastion.id
-  allocation_id = aws_eip.bastion_eip.id
-  depends_on    = [aws_instance.bastion]
+# resource "aws_eip_association" "bastion_eip_assoc" {
+#   instance_id   = aws_instance.Bastion.id
+#   allocation_id = aws_eip.bastion_eip.id
+#   depends_on    = [aws_instance.Bastion]
 
-}
+# }
