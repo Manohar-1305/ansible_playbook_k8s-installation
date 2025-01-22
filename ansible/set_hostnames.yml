@@ -1,6 +1,6 @@
 ---
 - name: Set hostnames for Kubernetes nodes
-  hosts: controlplane   # This will target all the nodes in your inventory
+  hosts: controlplane,node  # Target both controlplane and node groups
   become: yes  # Ensure we have necessary privileges to change hostnames
   gather_facts: false
 
@@ -20,6 +20,24 @@
     - name: Set hostname for master3
       when: inventory_hostname == 'master3'
       command: hostnamectl set-hostname master3
+      notify:
+        - Reboot node
+
+    - name: Set hostname for worker1
+      when: inventory_hostname == 'worker1'
+      command: hostnamectl set-hostname worker1
+      notify:
+        - Reboot node
+
+    - name: Set hostname for worker2
+      when: inventory_hostname == 'worker2'
+      command: hostnamectl set-hostname worker2
+      notify:
+        - Reboot node
+
+    - name: Set hostname for worker3
+      when: inventory_hostname == 'worker3'
+      command: hostnamectl set-hostname worker3
       notify:
         - Reboot node
 
