@@ -1,0 +1,58 @@
+---
+- name: Install and configure etcd
+  hosts: controlplane
+  become: yes
+  tasks:
+    - name: Update apt repositories
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+
+    - name: Install etcd package
+      apt:
+        name: etcd
+        state: present
+
+    - name: Update apt repositories again
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+
+    - name: Install wget and curl
+      apt:
+        name:
+          - wget
+          - curl
+        state: present
+
+    - name: Download etcd tarball
+      get_url:
+        url: https://github.com/etcd-io/etcd/releases/download/v3.5.6/etcd-v3.5.6-linux-amd64.tar.gz
+        dest: /tmp/etcd-v3.5.6-linux-amd64.tar.gz
+
+    - name: Extract etcd tarball
+      unarchive:
+        src: /tmp/etcd-v3.5.6-linux-amd64.tar.gz
+        dest: /tmp/
+        remote_src: yes
+
+    - name: Move etcd binaries to /usr/local/bin
+      copy:
+        src: "/tmp/etcd-v3.5.6-linux-amd64/{{ item }}"
+        dest: /usr/local/bin/
+        remote_src: yes
+      with_items:
+        - etcd
+        - etcdctl
+        - etcdutl
+
+    - name: Verify etcd installation
+      command: etcd --version
+      register: etcd_version
+      changed_when: false
+
+    - name: Display etcd version
+      debug:
+        var: etcd_version.stdout
