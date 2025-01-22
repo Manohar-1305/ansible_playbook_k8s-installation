@@ -19,6 +19,7 @@
 - import_playbook: aws_cloud_controller.yaml hostlist=local
 - import_playbook: etcdctl_install.yaml hostlist=controlplane
 - import_playbook: all.yaml hostlist=controlplane
+- import_playbook: front-proxy-ca.crt.yaml  hostlist=controlplane
 
 #- import_playbook: upgrade_master.yaml hostlist=controlplane
 #- import_playbook: upgrade_node.yaml hostlist=node
