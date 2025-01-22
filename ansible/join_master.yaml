@@ -1,0 +1,34 @@
+- hosts: master2,master3
+  serial: 1
+  name: Join additional master nodes to the Kubernetes cluster
+  become: yes
+  vars:
+    k8s_config_dir: /etc/kubernetes
+    k8s_version: v1.28.17
+    k8s_patches_directory: /opt/kubernetes/patches
+    kubeconfig_path: "{{ k8s_config_dir }}/admin.conf"
+  tasks:
+    - stat:
+        path: "{{ kubeconfig_path }}"
+      register: admin_conf
+
+    - name: Init additional master nodes
+      command: "{{ hostvars['dynamic_vars_holder']['master_join_command'] }} {{ kube_patches[k8s_version] }} {{ k8s_patches_directory }} --ignore-preflight-errors=FileContent--proc-sys-net-bridge-bridge-nf-call-iptables --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests"
+      when: admin_conf.stat.exists == false
+
+    - name: Remove patches directory
+      file:
+        path: "{{ k8s_patches_directory }}"
+        state: absent
+
+
+    - name: Wait for apiserver pod to be ready
+      command: kubectl wait --for=condition=ready --timeout=15m -n kube-system pod -l tier=control-plane --field-selector spec.nodeName={{ ansible_hostname }} --kubeconfig={{ kubeconfig_path }}
+      ignore_errors: yes
+      register: apiserver_pod_wait_result
+      when: cluster_restore is defined and cluster_restore
+
+    - name: Check if control plane pods are ready
+      fail:
+        msg: "Control plane pods are not ready"
+      when: cluster_restore is defined and cluster_restore and apiserver_pod_wait_result.rc != 0
