@@ -1,0 +1,30 @@
+---
+- name: Sync front-proxy-ca.crt to affected masters
+  hosts: master2,master3
+  become: true
+
+  tasks:
+    - name: Copy front-proxy-ca.crt from master1
+      ansible.builtin.fetch:
+        src: /etc/kubernetes/pki/front-proxy-ca.crt
+        dest: /tmp/front-proxy-ca.crt
+        flat: true
+      delegate_to: master1
+      become: true
+
+    - name: Distribute front-proxy-ca.crt to master nodes
+      copy:
+        src: /tmp/front-proxy-ca.crt
+        dest: /etc/kubernetes/pki/front-proxy-ca.crt
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Verify the file has been copied
+      stat:
+        path: /etc/kubernetes/pki/front-proxy-ca.crt
+      register: proxy_cert_status
+
+    - name: Display verification result
+      debug:
+        var: proxy_cert_status
