@@ -13,7 +13,9 @@
       register: admin_conf
 
     - name: Init additional master nodes
-      command: "{{ hostvars['dynamic_vars_holder']['master_join_command'] }} {{ kube_patches[k8s_version] }} {{ k8s_patches_directory }} --ignore-preflight-errors=FileContent--proc-sys-net-bridge-bridge-nf-call-iptables --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests"
+      command: {{ hostvars['dynamic_vars_holder']['master_join_command'] }} --token bsmqlk.5o9luccs6t4jwbyu --discovery-token-ca-cert-hash sha256:37b108dacdfa6464956aa8045e643ac05d2baac8a1830484047a5bbcbe6728c4 --ignore-preflight-errors=FileContent--proc-sys-net-bridge-bridge-nf-call-iptables --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
+
+
       when: admin_conf.stat.exists == false
 
     - name: Remove patches directory
