@@ -30,4 +30,5 @@ http {
 }
 sudo nginx -t
 sudo systemctl reload nginx
+ansible-playbook -i inventories/inventory.ini k8s_installer.yaml --ssh-extra-args="-o StrictHostKeyChecking=no"
 
