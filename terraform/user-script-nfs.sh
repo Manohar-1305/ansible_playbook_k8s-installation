@@ -10,7 +10,7 @@ ssh_key_path="$user_ssh_dir/authorized_keys"
 
 # Check if the user already exists
 if id "$username" &>/dev/null; then
-    echo "User $username already exists."
+    echo "User $user_name already exists."
     exit 1
 fi
 
